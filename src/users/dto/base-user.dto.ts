@@ -61,8 +61,22 @@ export class LoginResDto {
   @ApiProperty({
     description: 'accessToken',
   })
-  @IsEmail({}, { message: 'Неправильный формат email' })
   accessToken: string;
+
+  @ApiProperty({
+    description: 'user ID',
+  })
+  id: number;
+
+  @ApiProperty({
+    description: 'user fio',
+  })
+  fio: string;
+
+  @ApiProperty({
+    description: 'user phone',
+  })
+  phone: string;
 }
 export class LoginDto {
   @ApiProperty({

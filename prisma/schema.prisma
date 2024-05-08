@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-1.0.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -22,12 +21,15 @@ model User {
   fio         String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  parcels  Parcel[] // Одно-ко-многим отношение между User и Parcel
+
 }
 
 model Country {
   id          Int       @id @default(autoincrement())
   countryname String    @unique
   cities      City[]  
+  offices     Office[] 
 }
 
 model City {
@@ -35,4 +37,72 @@ model City {
   cityname    String    @unique
   countryId   Int     
   country     Country   @relation(fields: [countryId], references: [id])
+  offices     Office[] 
+}
+
+model Bag {
+  id          Int       @id @default(autoincrement())
+  title       String    @unique
+}
+
+model Service {
+  id           Int       @id @default(autoincrement())
+  header_title String
+  header_body  String
+  description  String
+  imagePath    String?
+}
+
+model Office {
+  id             Int       @id @default(autoincrement())
+  address        String
+  contactNumbers String
+  cityId         Int     
+  city           City      @relation(fields: [cityId], references: [id])
+  countryId      Int      
+  country        Country   @relation(fields: [countryId], references: [id])
+  openingHour Int       // Время открытия (в 24-часовом формате)
+  closingHour Int
+}
+
+model Franchise {
+  id          Int       @id @default(autoincrement())
+  region      String    
+  city        String    
+  address     String
+  fio         String    
+  birthDate   DateTime  
+  phone       String     
+  email       String
+  sourceInfo  String?  
+}
+
+model Request {
+  id            Int      @id @default(autoincrement())
+  fullName      String
+  phoneNumber   String
+  pickupAddress String
+  pickupTime    String
+  packageSize   String
+  packageCount  Int
+  deliveryAddress String
+}
+
+model Parcel {
+  id               Int     @id @default(autoincrement())
+  sender           String
+  recipient        String
+  status           String
+  sendDate         DateTime
+  receiveDate      DateTime?
+  invoiceNumber    String  @unique
+  deliveryCost     Float
+  trackingNumber   String  @unique
+  weight           Float?
+  dimensions       String?
+  contentDescription String?
+  userId           Int?   // Внешний ключ для связи с моделью User
+  user             User?   @relation(fields: [userId], references: [id])
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }

@@ -13,6 +13,13 @@ import { UpdateUserReqDto } from './dto/update-user.dto';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
+  async getUserParcels(userId: number) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { parcels: true },
+    });
+  }
+
   async findOneByEmail(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: {

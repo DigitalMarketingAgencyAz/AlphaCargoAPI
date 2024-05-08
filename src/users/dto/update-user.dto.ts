@@ -1,12 +1,12 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsOptional,
-  IsPhoneNumber,
   IsString,
   Matches,
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { IsValidPhoneNumber } from '../decorators/is-valid-number.decorator';
 
 const passwordRegEx =
   /^(?=.*[a-zа-яё])(?=.*[A-ZА-ЯЁ])(?=.*\d)(?=.*[@$!%*?&])[A-Za-zА-Яа-яЁё\d@$!%*?&]+$/;
@@ -38,9 +38,7 @@ export class UpdateUserReqDto {
     description: 'Номер телефона пользователя',
   })
   @IsOptional()
-  @IsPhoneNumber(null, {
-    message: 'Пожалуйста, введите корректный номер телефона.',
-  })
+  @IsValidPhoneNumber(['KG', 'KZ', 'RU'])
   phone?: string;
 }
 

@@ -3,8 +3,20 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { PrismaClient } from '@prisma/client';
 import { LocationModule } from './location/location.module';
+import { ServiceModule } from './service/service.module';
+import { PrismaClient } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { OfficeModule } from './office/office.module';
+import { FranchiseModule } from './franchise/franchise.module';
+import { RequestModule } from './request/request.module';
+import { ParcelModule } from './parcel/parcels.module';
+
+const randomFilename = () => {
+  return uuidv4();
+};
 
 // const DEFAULT_ADMIN = {
 //   email: 'admin@example.com',
@@ -22,21 +34,24 @@ import { LocationModule } from './location/location.module';
     import('@adminjs/nestjs').then(({ AdminModule }) =>
       AdminModule.createAdminAsync({
         useFactory: async () => {
-          await import('adminjs').then(async ({ AdminJS }) => {
-            const AdminJSPrisma = await import('@adminjs/prisma');
-            AdminJS.registerAdapter({
-              Resource: AdminJSPrisma.Resource,
-              Database: AdminJSPrisma.Database,
-            });
+          const { AdminJS, ComponentLoader } = await import('adminjs');
+          const AdminJSPrisma = await import('@adminjs/prisma');
+          AdminJS.registerAdapter({
+            Resource: AdminJSPrisma.Resource,
+            Database: AdminJSPrisma.Database,
           });
           const { getModelByName } = await import('@adminjs/prisma');
-          // Note: Feel free to contribute to this documentation if you find a Nest-way of
-          // injecting PrismaService into AdminJS module
           const prisma = new PrismaClient();
-          // `_baseDmmf` contains necessary Model metadata but it is a private method
-          // so it isn't included in PrismaClient type
+          const uploadModule = await import('@adminjs/upload');
+          const componentLoader = new ComponentLoader();
+          const uploadFeature = uploadModule.default;
           return {
             adminJsOptions: {
+              locale: {
+                language: 'en',
+                availableLanguages: ['en'],
+              },
+              componentLoader,
               rootPath: '/admin',
               resources: [
                 {
@@ -44,7 +59,19 @@ import { LocationModule } from './location/location.module';
                     model: getModelByName('User'),
                     client: prisma,
                   },
-                  options: {},
+                  options: {
+                    actions: {
+                      edit: {
+                        isVisible: false,
+                      },
+                      new: {
+                        isVisible: false,
+                      },
+                      delete: {
+                        isVisible: false,
+                      },
+                    },
+                  },
                 },
                 {
                   resource: {
@@ -60,6 +87,34 @@ import { LocationModule } from './location/location.module';
                 },
                 {
                   resource: {
+                    model: getModelByName('Office'),
+                    client: prisma,
+                  },
+                  options: {
+                    properties: {
+                      address: { isTitle: true },
+                      contactNumbers: {
+                        isVisible: { list: false, show: true, edit: true },
+                      },
+                      cityId: { isVisible: false },
+                      countryId: { isVisible: false },
+                      openingHour: { isVisible: true },
+                      closingHour: { isVisible: true },
+                      city: {
+                        isVisible: true,
+                        type: 'reference',
+                        reference: 'City',
+                      },
+                      country: {
+                        isVisible: true,
+                        type: 'reference',
+                        reference: 'Country',
+                      },
+                    },
+                  },
+                },
+                {
+                  resource: {
                     model: getModelByName('Country'),
                     client: prisma,
                   },
@@ -69,6 +124,50 @@ import { LocationModule } from './location/location.module';
                       countryname: { isTitle: true },
                     },
                   },
+                },
+                {
+                  resource: {
+                    model: getModelByName('Franchise'),
+                    client: prisma,
+                  },
+                },
+                {
+                  resource: {
+                    model: getModelByName('Request'),
+                    client: prisma,
+                  },
+                },
+                {
+                  resource: {
+                    model: getModelByName('Parcel'),
+                    client: prisma,
+                  },
+                },
+                {
+                  resource: {
+                    model: getModelByName('Service'),
+                    client: prisma,
+                  },
+                  features: [
+                    uploadFeature({
+                      componentLoader,
+                      provider: {
+                        local: {
+                          bucket: 'uploads/',
+                          opts: { baseUrl: '/uploads' },
+                        },
+                      },
+                      properties: {
+                        key: 'imagePath',
+                        mimeType: 'image/png',
+                      },
+                      uploadPath: (record, filename) => {
+                        const extension = filename.split('.').pop();
+                        const randomName = randomFilename();
+                        return `service/${record.id()}/${randomName}.${extension}`;
+                      },
+                    }),
+                  ],
                 },
               ],
             },
@@ -89,6 +188,15 @@ import { LocationModule } from './location/location.module';
     AuthModule,
     UsersModule,
     LocationModule,
+    ServiceModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'), // Путь к директории с файлами
+      serveRoot: '/uploads', // Путь, по которому будут доступны файлы
+    }),
+    OfficeModule,
+    FranchiseModule,
+    RequestModule,
+    ParcelModule,
   ],
   controllers: [AppController],
   providers: [AppService],

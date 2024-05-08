@@ -9,7 +9,7 @@ async function bootstrap() {
     .setTitle('Your API Title')
     .setDescription('Your API description')
     .setVersion('1.0')
-    // .addServer('http://localhost:3333/', 'Local environment')
+    .addServer('http://localhost:3333/', 'Local environment')
     .addBearerAuth()
     // .addServer('https://staging.yourapi.com/', 'Staging')
     .addServer('https://alfacargobackend.onrender.com/', 'Production')

@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
-    "moduleResolution": "node16",
-    "module": "Node16",
-    "target": "esnext",
+    "module": "NodeNext",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "target": "ES2022",
+    "jsx": "react",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
@@ -17,6 +18,11 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "noFallthroughCasesInSwitch": false,
+    "noEmitOnError": false,
+    "downlevelIteration": true,
+    "paths": {
+      "src/*": ["src/*"],
+    },
+  },
 }

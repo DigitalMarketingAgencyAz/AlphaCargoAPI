@@ -1,0 +1,1 @@
+{"version":3,"file":"parcels.module.js","sourceRoot":"","sources":["../../src/parcel/parcels.module.ts"],"names":[],"mappings":";;;;;;;;;AAAA,2CAAwC;AACxC,uDAAmD;AACnD,6DAAyD;AACzD,6DAAyD;AAMlD,IAAM,YAAY,GAAlB,MAAM,YAAY;CAAG,CAAA;AAAf,oCAAY;uBAAZ,YAAY;IAJxB,IAAA,eAAM,EAAC;QACN,SAAS,EAAE,CAAC,gCAAc,EAAE,8BAAa,CAAC;QAC1C,WAAW,EAAE,CAAC,sCAAiB,CAAC;KACjC,CAAC;GACW,YAAY,CAAG"}

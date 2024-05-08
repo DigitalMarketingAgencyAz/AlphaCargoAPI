@@ -6,24 +6,16 @@ import {
   Param,
   NotFoundException,
   ParseIntPipe,
-  UseGuards,
 } from '@nestjs/common';
-import {
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-  ApiParam,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
 import { CountriesService } from './country.service';
 import { CitiesService } from './city.service';
-import { AuthGuard } from 'src/auth/auth.guard';
 import { CityDto, CountryDto } from './dto/location.dto';
+import { Public } from '../auth/public-strategy';
 
 @Controller('locations')
 @ApiTags('locations')
-@UseGuards(AuthGuard)
-@ApiBearerAuth()
+@Public()
 export class LocationController {
   constructor(
     private readonly countriesService: CountriesService,
