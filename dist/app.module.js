@@ -47,8 +47,67 @@ exports.AppModule = AppModule = __decorate([
                     return {
                         adminJsOptions: {
                             locale: {
-                                language: 'en',
-                                availableLanguages: ['en'],
+                                language: 'ru',
+                                translations: {
+                                    ru: {
+                                        labels: {
+                                            User: 'Пользователи',
+                                            City: 'Города',
+                                            Office: 'Офисы',
+                                            Country: 'Страны',
+                                            Franchise: 'Франшиза',
+                                            Bag: 'Мешки',
+                                            Calculator: 'Данные о калькуляторе',
+                                            Request: 'Заявки',
+                                            Service: 'Услуги',
+                                        },
+                                        properties: {
+                                            email: 'Электронная почта',
+                                            fio: 'ФИО',
+                                            phone: 'Телефон',
+                                            createdAt: 'Создано',
+                                            updatedAt: 'Обновлено',
+                                            cityname: 'Название города',
+                                            country: 'Страна',
+                                            address: 'Адрес',
+                                            city: 'Город',
+                                            openingHour: 'Час открытия',
+                                            closingHour: 'Час закрытия',
+                                            region: 'Регион',
+                                            birthDate: 'Дата рождения',
+                                            title: 'Заголовок',
+                                            price: 'Цена',
+                                            sewing: 'Пошив',
+                                            imported: 'Привозные',
+                                            countryname: 'Название страны',
+                                            marked: 'Маркированный',
+                                            brand: 'Бренд',
+                                            shoes: 'Обувь',
+                                            fullName: 'Полное имя',
+                                            phoneNumber: 'Номер телефона',
+                                            pickupAddress: 'Адрес забора',
+                                            pickupTime: 'Время забора',
+                                            packageSize: 'Размер пакета',
+                                            packageCount: 'Количество пакетов',
+                                            deliveryAddress: 'Адрес доставки',
+                                            headerTitle: 'Заголовок шапки',
+                                            headerBody: 'Тело шапки',
+                                            description: 'Описание',
+                                        },
+                                        messages: {
+                                            welcomeOnBoard_title: 'Добро пожаловать',
+                                            NAVIGATION: 'Навигация',
+                                            ru: 'Русский',
+                                        },
+                                        actions: {
+                                            new: 'Создать новую запись',
+                                            edit: 'Редактирование',
+                                            show: 'Удаление',
+                                            filter: 'Фильтр'
+                                        },
+                                    },
+                                },
+                                availableLanguages: ['en', 'ru'],
                             },
                             componentLoader,
                             rootPath: '/admin',
@@ -132,13 +191,28 @@ exports.AppModule = AppModule = __decorate([
                                 },
                                 {
                                     resource: {
-                                        model: getModelByName('Request'),
+                                        model: getModelByName('Bag'),
                                         client: prisma,
                                     },
                                 },
                                 {
                                     resource: {
-                                        model: getModelByName('Parcel'),
+                                        model: getModelByName('Calculator'),
+                                        client: prisma,
+                                    },
+                                    options: {
+                                        properties: {
+                                            city: {
+                                                isVisible: true,
+                                                type: 'reference',
+                                                reference: 'City',
+                                            },
+                                        },
+                                    },
+                                },
+                                {
+                                    resource: {
+                                        model: getModelByName('Request'),
                                         client: prisma,
                                     },
                                 },
