@@ -22,8 +22,19 @@ const office_module_1 = require("./office/office.module");
 const franchise_module_1 = require("./franchise/franchise.module");
 const request_module_1 = require("./request/request.module");
 const parcels_module_1 = require("./parcel/parcels.module");
+const calculator_module_1 = require("./calculator/calculator.module");
 const randomFilename = () => {
     return (0, uuid_1.v4)();
+};
+const DEFAULT_ADMIN = {
+    email: 'admin@example.com',
+    password: 'alphacargopassword123!',
+};
+const authenticate = async (email, password) => {
+    if (email === DEFAULT_ADMIN.email && password === DEFAULT_ADMIN.password) {
+        return Promise.resolve(DEFAULT_ADMIN);
+    }
+    return null;
 };
 let AppModule = class AppModule {
 };
@@ -103,7 +114,7 @@ exports.AppModule = AppModule = __decorate([
                                             new: 'Создать новую запись',
                                             edit: 'Редактирование',
                                             show: 'Удаление',
-                                            filter: 'Фильтр'
+                                            filter: 'Фильтр',
                                         },
                                     },
                                 },
@@ -244,6 +255,11 @@ exports.AppModule = AppModule = __decorate([
                                 },
                             ],
                         },
+                        auth: {
+                            authenticate,
+                            cookieName: 'adminjs',
+                            cookiePassword: 'secret',
+                        },
                         sessionOptions: {
                             resave: true,
                             saveUninitialized: true,
@@ -264,6 +280,7 @@ exports.AppModule = AppModule = __decorate([
             franchise_module_1.FranchiseModule,
             request_module_1.RequestModule,
             parcels_module_1.ParcelModule,
+            calculator_module_1.CalculatorModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

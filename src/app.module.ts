@@ -13,6 +13,7 @@ import { OfficeModule } from './office/office.module';
 import { FranchiseModule } from './franchise/franchise.module';
 import { RequestModule } from './request/request.module';
 import { ParcelModule } from './parcel/parcels.module';
+import { CalculatorModule } from './calculator/calculator.module';
 
 const randomFilename = () => {
   return uuidv4();
@@ -277,6 +278,7 @@ const authenticate = async (email: string, password: string) => {
     FranchiseModule,
     RequestModule,
     ParcelModule,
+    CalculatorModule,
   ],
   controllers: [AppController],
   providers: [AppService],
