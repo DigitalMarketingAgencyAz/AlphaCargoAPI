@@ -33,30 +33,44 @@ model Country {
   offices     Office[]
 }
 
+enum City_Type {
+  From
+  To
+  Both
+}
+
 model City {
-  id          Int          @id @default(autoincrement())
-  cityname    String       @unique
-  countryId   Int
-  country     Country      @relation(fields: [countryId], references: [id])
-  offices     Office[]
-  calculators Calculator[]
+  id              Int          @id @default(autoincrement())
+  cityname        String       @unique
+  countryId       Int
+  type            City_Type    @default(Both)
+  country         Country      @relation(fields: [countryId], references: [id])
+  offices         Office[]
+  calculatorsFrom Calculator[] @relation("CalculatorFrom")
+  calculatorsTo   Calculator[] @relation("CalculatorTo")
 }
 
 model Calculator {
-  id       Int  @id @default(autoincrement())
-  sewing   Int?
-  imported Int?
-  marked   Int?
-  brand    Int?
-  shoes    Int?
-  cityId   Int
-  city     City @relation(fields: [cityId], references: [id])
+  id           Int        @id @default(autoincrement())
+  parcelTypeId Int
+  parcelType   ParcelType @relation(fields: [parcelTypeId], references: [id])
+  cityFromId   Int
+  cityFrom     City       @relation("CalculatorFrom", fields: [cityFromId], references: [id])
+  cityToId     Int
+  cityTo       City       @relation("CalculatorTo", fields: [cityToId], references: [id])
+  price        Int
 }
 
 model Bag {
   id    Int    @id @default(autoincrement())
   title String @unique
   price Int
+}
+
+model ParcelType {
+  id         Int          @id @default(autoincrement())
+  name       String       @unique
+  Calculator Calculator[]
 }
 
 model Service {

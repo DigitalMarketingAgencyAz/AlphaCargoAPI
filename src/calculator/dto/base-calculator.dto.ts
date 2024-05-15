@@ -1,44 +1,40 @@
+import { IsInt, IsNotEmpty, IsPositive } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class BaseCalculatorDto {
-  @ApiProperty({ description: 'ID калькулятора', example: 1 })
-  id: number;
+export class CalculateDto {
+  @ApiProperty({ example: 1, description: 'ID of the city From' })
+  @IsInt()
+  @IsNotEmpty()
+  @IsPositive()
+  cityFromId: number;
 
-  @ApiProperty({
-    description: 'Количество швейных изделий',
-    example: 100,
-    nullable: true,
-  })
-  sewing?: number;
+  @ApiProperty({ example: 1, description: 'ID of the city To' })
+  @IsInt()
+  @IsNotEmpty()
+  @IsPositive()
+  cityToId: number;
 
-  @ApiProperty({
-    description: 'Количество импортированных изделий',
-    example: 50,
-    nullable: true,
-  })
-  imported?: number;
+  @ApiProperty({ example: 1, description: 'ID of the parcel type' })
+  @IsInt()
+  @IsNotEmpty()
+  @IsPositive()
+  parcelTypeId: number;
 
-  @ApiProperty({
-    description: 'Количество маркированных изделий',
-    example: 30,
-    nullable: true,
-  })
-  marked?: number;
+  @ApiProperty({ example: 10, description: 'Weight of the parcel' })
+  @IsInt()
+  @IsNotEmpty()
+  @IsPositive()
+  weight: number;
 
-  @ApiProperty({
-    description: 'Количество брендированных изделий',
-    example: 20,
-    nullable: true,
-  })
-  brand?: number;
+  @ApiProperty({ example: 2, description: 'Count of the parcel type' })
+  @IsInt()
+  @IsNotEmpty()
+  @IsPositive()
+  countOfType: number;
 
-  @ApiProperty({
-    description: 'Количество обуви',
-    example: 40,
-    nullable: true,
-  })
-  shoes?: number;
-
-  @ApiProperty({ description: 'ID города', example: 1 })
-  cityId: number;
+  @ApiProperty({ example: 1, description: 'ID of the bag' })
+  @IsInt()
+  @IsNotEmpty()
+  @IsPositive()
+  bagId: number;
 }

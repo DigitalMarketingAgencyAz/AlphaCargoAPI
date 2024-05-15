@@ -1,7 +1,7 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CalculatorService } from './calculator.service';
-import { BaseCalculatorDto } from './dto/base-calculator.dto';
+import { CalculateDto } from './dto/base-calculator.dto';
 import { Public } from 'src/auth/public-strategy';
 
 @ApiTags('calculator')
@@ -10,20 +10,21 @@ import { Public } from 'src/auth/public-strategy';
 export class CalculatorController {
   constructor(private readonly calculatorService: CalculatorService) {}
 
-  @Get('city/:cityId')
-  @ApiOperation({ summary: 'Get calculator entries by cityId' })
+  @Post()
+  @ApiBody({ type: CalculateDto })
+  @ApiOperation({ summary: 'Calculate total cost' })
   @ApiResponse({
     status: 200,
-    description: 'List of calculator entries for the specified city',
-    type: [BaseCalculatorDto],
+    description: 'Calculated total cost',
   })
   @ApiResponse({
     status: 404,
-    description: 'No calculator entries found for the specified cityId',
+    description: 'Data not found for the specified cityId or parcelTypeId',
   })
-  findByCityId(
-    @Param('cityId', ParseIntPipe) cityId: number,
-  ): Promise<BaseCalculatorDto> {
-    return this.calculatorService.findByCityId(cityId);
+  async calculateTotalCost(
+    @Body()
+    calculateDto: CalculateDto,
+  ): Promise<number> {
+    return this.calculatorService.calculateTotalCost(calculateDto);
   }
 }

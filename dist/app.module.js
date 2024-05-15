@@ -23,6 +23,8 @@ const franchise_module_1 = require("./franchise/franchise.module");
 const request_module_1 = require("./request/request.module");
 const parcels_module_1 = require("./parcel/parcels.module");
 const calculator_module_1 = require("./calculator/calculator.module");
+const bag_module_1 = require("./bag/bag.module");
+const parcel_type_module_1 = require("./parceltype/parcel-type.module");
 const randomFilename = () => {
     return (0, uuid_1.v4)();
 };
@@ -67,7 +69,8 @@ exports.AppModule = AppModule = __decorate([
                                             Office: 'Офисы',
                                             Country: 'Страны',
                                             Franchise: 'Франшиза',
-                                            Bag: 'Мешки',
+                                            Bag: 'Тип посылки',
+                                            ParcelType: 'Тип товара',
                                             Calculator: 'Данные о калькуляторе',
                                             Request: 'Заявки',
                                             Service: 'Услуги',
@@ -104,6 +107,8 @@ exports.AppModule = AppModule = __decorate([
                                             headerTitle: 'Заголовок шапки',
                                             headerBody: 'Тело шапки',
                                             description: 'Описание',
+                                            cityFrom: 'Город отправления',
+                                            cityTo: 'Город доставки',
                                         },
                                         messages: {
                                             welcomeOnBoard_title: 'Добро пожаловать',
@@ -208,17 +213,14 @@ exports.AppModule = AppModule = __decorate([
                                 },
                                 {
                                     resource: {
-                                        model: getModelByName('Calculator'),
+                                        model: getModelByName('ParcelType'),
                                         client: prisma,
                                     },
-                                    options: {
-                                        properties: {
-                                            city: {
-                                                isVisible: true,
-                                                type: 'reference',
-                                                reference: 'City',
-                                            },
-                                        },
+                                },
+                                {
+                                    resource: {
+                                        model: getModelByName('Calculator'),
+                                        client: prisma,
                                     },
                                 },
                                 {
@@ -281,6 +283,8 @@ exports.AppModule = AppModule = __decorate([
             request_module_1.RequestModule,
             parcels_module_1.ParcelModule,
             calculator_module_1.CalculatorModule,
+            bag_module_1.BagModule,
+            parcel_type_module_1.ParcelTypeModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

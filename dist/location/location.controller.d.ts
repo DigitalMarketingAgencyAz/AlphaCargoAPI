@@ -14,6 +14,7 @@ export declare class LocationController {
         id: number;
         cityname: string;
         countryId: number;
+        type: import(".prisma/client").$Enums.City_Type;
     }[]>;
     getCityById(cityId: number): Promise<CityDto>;
 }

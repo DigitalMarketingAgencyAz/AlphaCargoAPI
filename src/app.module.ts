@@ -14,6 +14,8 @@ import { FranchiseModule } from './franchise/franchise.module';
 import { RequestModule } from './request/request.module';
 import { ParcelModule } from './parcel/parcels.module';
 import { CalculatorModule } from './calculator/calculator.module';
+import { BagModule } from './bag/bag.module';
+import { ParcelTypeModule } from './parceltype/parcel-type.module';
 
 const randomFilename = () => {
   return uuidv4();
@@ -58,7 +60,8 @@ const authenticate = async (email: string, password: string) => {
                       Office: 'Офисы',
                       Country: 'Страны',
                       Franchise: 'Франшиза',
-                      Bag: 'Мешки',
+                      Bag: 'Тип посылки',
+                      ParcelType: 'Тип товара',
                       Calculator: 'Данные о калькуляторе',
                       Request: 'Заявки',
                       Service: 'Услуги',
@@ -95,6 +98,8 @@ const authenticate = async (email: string, password: string) => {
                       headerTitle: 'Заголовок шапки',
                       headerBody: 'Тело шапки',
                       description: 'Описание',
+                      cityFrom: 'Город отправления',
+                      cityTo: 'Город доставки',
                     },
                     messages: {
                       welcomeOnBoard_title: 'Добро пожаловать',
@@ -199,17 +204,14 @@ const authenticate = async (email: string, password: string) => {
                 },
                 {
                   resource: {
-                    model: getModelByName('Calculator'),
+                    model: getModelByName('ParcelType'),
                     client: prisma,
                   },
-                  options: {
-                    properties: {
-                      city: {
-                        isVisible: true,
-                        type: 'reference',
-                        reference: 'City',
-                      },
-                    },
+                },
+                {
+                  resource: {
+                    model: getModelByName('Calculator'),
+                    client: prisma,
                   },
                 },
                 {
@@ -279,6 +281,8 @@ const authenticate = async (email: string, password: string) => {
     RequestModule,
     ParcelModule,
     CalculatorModule,
+    BagModule,
+    ParcelTypeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
