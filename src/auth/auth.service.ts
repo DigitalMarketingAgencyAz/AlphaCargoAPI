@@ -15,7 +15,7 @@ export class AuthService {
     if (user) {
       const isPasswordMatch = await bcrypt.compare(pass, user?.password);
       if (isPasswordMatch) {
-        const payload = { id: user.id, email: user.email };
+        const payload = { id: user.id, email: user.email, phone: user.phone };
         return {
           access_token: await this.jwtService.signAsync(payload, {
             expiresIn: '3h',

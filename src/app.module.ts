@@ -16,6 +16,7 @@ import { ParcelModule } from './parcel/parcels.module';
 import { CalculatorModule } from './calculator/calculator.module';
 import { BagModule } from './bag/bag.module';
 import { ParcelTypeModule } from './parceltype/parcel-type.module';
+import { NotificationModule } from './notification/notification.module';
 
 const randomFilename = () => {
   return uuidv4();
@@ -54,6 +55,68 @@ const authenticate = async (email: string, password: string) => {
                 language: 'ru',
                 translations: {
                   ru: {
+                    actions: {
+                      new: 'Создать новый',
+                      edit: 'Редактировать',
+                      show: 'Показать',
+                      delete: 'Удалить',
+                      bulkDelete: 'Удалить все',
+                      list: 'Список',
+                    },
+                    buttons: {
+                      save: 'Сохранить',
+                      addNewItem: 'Добавить новый элемент',
+                      filter: 'Фильтр',
+                      filterActive: 'Фильтр ({{count}})',
+                      applyChanges: 'Применить изменения',
+                      resetFilter: 'Сбросить фильтры',
+                      confirmRemovalMany:
+                        'Подтвердить удаление {{count}} записи',
+                      confirmRemovalMany_plural:
+                        'Подтвердить удаление {{count}} записей',
+                      logout: 'Выйти',
+                      login: 'Войти',
+                      seeTheDocumentation: 'Смотрите: <1>документация</1>',
+                      createFirstRecord: 'Создать первую запись',
+                      contactUs: 'Связаться с нами',
+                      cancel: 'Отмена',
+                      confirm: 'Подтвердить',
+                    },
+                    components: {
+                      DropZone: {
+                        placeholder:
+                          'Перетащите свой файл сюда или нажмите, чтобы просмотреть',
+                        acceptedSize: 'Максимальный размер: {{maxSize}}',
+                        acceptedType: 'Поддерживаются: {{mimeTypes}}',
+                        unsupportedSize: 'Файл {{fileName}} слишком велик',
+                        unsupportedType:
+                          'Тип файла {{fileName}} не поддерживается: {{fileType}}',
+                      },
+                      LanguageSelector: {
+                        availableLanguages: {
+                          de: 'Немецкий',
+                          en: 'Английский',
+                          es: 'Испанский',
+                          it: 'Итальянский',
+                          ja: 'Японский',
+                          pl: 'Польский',
+                          'pt-BR': 'Португальский (Бразилия)',
+                          ua: 'Украинский',
+                          'zh-CN': 'Китайский',
+                          ru: 'Русский',
+                        },
+                      },
+                      Login: {
+                        welcomeHeader: 'Добро пожаловать',
+                        welcomeMessage:
+                          'в AdminJS - ведущую панель администратора с открытым исходным кодом для приложений Node.js, которая позволяет управлять всеми вашими данными в одном месте',
+                        properties: {
+                          email: 'Электронная почта',
+                          password: 'Пароль',
+                        },
+                        loginButton: 'Войти в систему',
+                      },
+                    },
                     labels: {
                       User: 'Пользователи',
                       City: 'Города',
@@ -65,6 +128,14 @@ const authenticate = async (email: string, password: string) => {
                       Calculator: 'Данные о калькуляторе',
                       Request: 'Заявки',
                       Service: 'Услуги',
+                      Notification: 'Уведомления',
+                      navigation: 'Навигация',
+                      pages: 'Страницы',
+                      selectedRecords: 'Выбрано ({{selected}})',
+                      filters: 'Фильтры',
+                      adminVersion: 'Версия AdminJS: {{version}}',
+                      appVersion: 'Версия приложения: {{version}}',
+                      dashboard: 'Панель управления',
                     },
                     properties: {
                       email: 'Электронная почта',
@@ -102,15 +173,85 @@ const authenticate = async (email: string, password: string) => {
                       cityTo: 'Город доставки',
                     },
                     messages: {
-                      welcomeOnBoard_title: 'Добро пожаловать',
-                      NAVIGATION: 'Навигация',
-                      ru: 'Русский',
-                    },
-                    actions: {
-                      new: 'Создать новую запись',
-                      edit: 'Редактирование',
-                      show: 'Удаление',
-                      filter: 'Фильтр',
+                      successfullyBulkDeleted:
+                        'Успешно удалено {{count}} запись',
+                      successfullyBulkDeleted_plural:
+                        'Успешно удалено {{count}} записей',
+                      successfullyDeleted: 'Успешно удалена выбранная запись',
+                      successfullyUpdated: 'Успешно обновлена выбранная запись',
+                      thereWereValidationErrors:
+                        'Есть ошибки валидации – посмотрите ниже',
+                      forbiddenError:
+                        'Вы не можете выполнять действия {{actionName}} на {{resourceId}}',
+                      anyForbiddenError:
+                        'Вы не можете выполнить заданное действие',
+                      successfullyCreated: 'Успешно создана новая запись',
+                      bulkDeleteError:
+                        'Произошла ошибка при удалении записей. Проверьте консоль для дополнительной информации',
+                      errorFetchingRecords:
+                        'Произошла ошибка при получении записей. Проверьте консоль для дополнительной информации',
+                      errorFetchingRecord:
+                        'Произошла ошибка при получении записи. Проверьте консоль для дополнительной информации',
+                      noRecordsSelected: 'Вы не выбрали ни одной записи',
+                      theseRecordsWillBeRemoved:
+                        'Следующая запись будет удалена',
+                      theseRecordsWillBeRemoved_plural:
+                        'Следующие записи будут удалены',
+                      pickSomeFirstToRemove:
+                        'Чтобы удалить записи, сначала их нужно выбрать',
+                      error404Resource: 'Ресурс с ID: {{resourceId}} не найден',
+                      error404Action:
+                        'Ресурс с ID: {{resourceId}} не имеет действия с названием: {{actionName}} или у вас нет прав на его использование!',
+                      error404Record:
+                        'Ресурс с ID: {{resourceId}} не имеет записи с ID: {{recordId}} или у вас нет прав на его использование!',
+                      seeConsoleForMore:
+                        'Посмотрите консоль разработчика, чтобы узнать больше...',
+                      noActionComponent:
+                        'Вы должны реализовать ActionComponent для своего действия',
+                      noRecordsInResource: 'В этом ресурсе нет записей',
+                      noRecords: 'Нет записей',
+                      confirmDelete:
+                        'Вы действительно хотите удалить этот элемент?',
+                      welcomeOnBoard_title: 'Добро пожаловать на борт!',
+                      welcomeOnBoard_subtitle:
+                        'Теперь вы один из нас! Мы подготовили для вас несколько советов для начала:',
+                      addingResources_title: 'Добавление ресурсов',
+                      addingResources_subtitle:
+                        'Как добавить новые ресурсы в боковую панель',
+                      customizeResources_title: 'Настройка ресурсов',
+                      customizeResources_subtitle:
+                        'Определение поведения, добавление свойств и т.д.',
+                      customizeActions_title: 'Настройка действий',
+                      customizeActions_subtitle:
+                        'Изменение существующих действий и добавление новых',
+                      writeOwnComponents_title: 'Написание компонентов',
+                      writeOwnComponents_subtitle:
+                        'Как изменить внешний вид AdminJS',
+                      customDashboard_title: 'Панель управления',
+                      customDashboard_subtitle:
+                        'Как изменить этот экран и добавить новые страницы в боковую панель',
+                      roleBasedAccess_title: 'Контроль доступа на основе ролей',
+                      roleBasedAccess_subtitle:
+                        'Создание ролей и разрешений пользователей в AdminJS',
+                      community_title:
+                        'Присоединяйтесь к нашему сообществу в Discord',
+                      community_subtitle:
+                        'Общайтесь с разработчиками и другими пользователями AdminJS',
+                      foundBug_title: 'Нашли ошибку? Нужны улучшения?',
+                      foundBug_subtitle:
+                        'Опишите проблему в нашем репозитории на GitHub',
+                      needMoreSolutions_title:
+                        'Нужны более продвинутые решения?',
+                      needMoreSolutions_subtitle:
+                        'Мы здесь, чтобы помочь вам с UX/UI дизайном и разработкой программного обеспечения на основе (и не только) AdminJS',
+                      invalidCredentials:
+                        'Неправильный адрес электронной почты и/или пароль',
+                      pageNotFound_title: 'Страница не найдена',
+                      pageNotFound_subtitle:
+                        'Страница <strong>"{{pageName}}"</strong> не существует',
+                      componentNotFound_title: 'Компонент не указан',
+                      componentNotFound_subtitle:
+                        'Вы должны указать компонент, который будет рендерить этот элемент',
                     },
                   },
                 },
@@ -220,12 +361,12 @@ const authenticate = async (email: string, password: string) => {
                     client: prisma,
                   },
                 },
-                // {
-                //   resource: {
-                //     model: getModelByName('Parcel'),
-                //     client: prisma,
-                //   },
-                // },
+                {
+                  resource: {
+                    model: getModelByName('Notification'),
+                    client: prisma,
+                  },
+                },
                 {
                   resource: {
                     model: getModelByName('Service'),
@@ -283,6 +424,7 @@ const authenticate = async (email: string, password: string) => {
     CalculatorModule,
     BagModule,
     ParcelTypeModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -4,20 +4,16 @@ import {
   Patch,
   HttpCode,
   HttpStatus,
-  Param,
   NotFoundException,
   Get,
   UseGuards,
-  ParseIntPipe,
   Req,
-  ForbiddenException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
   ApiOperation,
   ApiResponse,
   ApiTags,
-  ApiParam,
   ApiBody,
   ApiBearerAuth,
 } from '@nestjs/swagger';
@@ -51,14 +47,9 @@ export class UserController {
     return user;
   }
 
-  @Patch(':id')
+  @Patch()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Update user information' })
-  @ApiParam({
-    name: 'id',
-    description: 'ID пользователя',
-    type: Number,
-  })
   @ApiBody({ type: UpdateUserReqDto })
   @ApiResponse({
     status: 200,
@@ -66,14 +57,10 @@ export class UserController {
     type: CreateUserResDto,
   })
   async updateUser(
-    @Param('id', ParseIntPipe) userId: number,
     @Req() request,
     @Body() updateUserReqDto: UpdateUserReqDto,
   ): Promise<UpdateUserResDto> {
-    console.log(request.user, userId);
-    if (request.user.id !== userId) {
-      throw new ForbiddenException();
-    }
+    const userId = request.user.id;
     const updatedUser = await this.usersService.update(
       userId,
       updateUserReqDto,
@@ -81,13 +68,13 @@ export class UserController {
     return updatedUser;
   }
 
-  @Get('userparcel')
-  @ApiResponse({
-    status: 200,
-    description: 'Возвращает список всех посылок пользователя.',
-  })
-  getUserParcels(@Req() request) {
-    const userId = request.user.id;
-    return this.usersService.getUserParcels(userId);
-  }
+  // @Get('userparcel')
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Возвращает список всех посылок пользователя.',
+  // })
+  // getUserParcels(@Req() request) {
+  //   const userId = request.user.id;
+  //   return this.usersService.getUserParcels(userId);
+  // }
 }

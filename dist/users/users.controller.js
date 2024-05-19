@@ -33,17 +33,10 @@ let UserController = class UserController {
         }
         return user;
     }
-    async updateUser(userId, request, updateUserReqDto) {
-        console.log(request.user, userId);
-        if (request.user.id !== userId) {
-            throw new common_1.ForbiddenException();
-        }
+    async updateUser(request, updateUserReqDto) {
+        const userId = request.user.id;
         const updatedUser = await this.usersService.update(userId, updateUserReqDto);
         return updatedUser;
-    }
-    getUserParcels(request) {
-        const userId = request.user.id;
-        return this.usersService.getUserParcels(userId);
     }
 };
 exports.UserController = UserController;
@@ -62,38 +55,21 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUser", null);
 __decorate([
-    (0, common_1.Patch)(':id'),
+    (0, common_1.Patch)(),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({ summary: 'Update user information' }),
-    (0, swagger_1.ApiParam)({
-        name: 'id',
-        description: 'ID пользователя',
-        type: Number,
-    }),
     (0, swagger_1.ApiBody)({ type: update_user_dto_1.UpdateUserReqDto }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'User information updated',
         type: create_user_dto_1.CreateUserResDto,
     }),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
-    __param(1, (0, common_1.Req)()),
-    __param(2, (0, common_1.Body)()),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object, update_user_dto_1.UpdateUserReqDto]),
+    __metadata("design:paramtypes", [Object, update_user_dto_1.UpdateUserReqDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "updateUser", null);
-__decorate([
-    (0, common_1.Get)('userparcel'),
-    (0, swagger_1.ApiResponse)({
-        status: 200,
-        description: 'Возвращает список всех посылок пользователя.',
-    }),
-    __param(0, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], UserController.prototype, "getUserParcels", null);
 exports.UserController = UserController = __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     (0, common_1.Controller)('users'),

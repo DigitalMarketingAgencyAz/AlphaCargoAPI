@@ -44,7 +44,6 @@ let UsersService = class UsersService {
     async getUserParcels(userId) {
         return this.prisma.user.findUnique({
             where: { id: userId },
-            include: { parcels: true },
         });
     }
     async findOneByEmail(email) {
@@ -99,6 +98,7 @@ let UsersService = class UsersService {
                 id: true,
                 email: true,
                 phone: true,
+                fio: true,
             },
         });
         return updatedUser;

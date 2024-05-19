@@ -11,86 +11,74 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetParcelDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
+const class_validator_1 = require("class-validator");
 class GetParcelDto {
-    id;
+    date;
+    invoice;
     sender;
     recipient;
-    status;
-    sendDate;
-    receiveDate;
-    invoiceNumber;
-    deliveryCost;
-    trackingNumber;
+    city;
     weight;
-    dimensions;
-    contentDescription;
+    quantity;
+    shipment_date;
+    status;
 }
 exports.GetParcelDto = GetParcelDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 1, description: 'Уникальный идентификатор посылки' }),
-    __metadata("design:type", Number)
-], GetParcelDto.prototype, "id", void 0);
+    (0, swagger_1.ApiProperty)({
+        example: '2024-05-20T02:17:09Z',
+        description: 'Дата создания',
+    }),
+    (0, class_validator_1.IsDateString)(),
+    __metadata("design:type", String)
+], GetParcelDto.prototype, "date", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'John Doe', description: 'Имя отправителя' }),
+    (0, swagger_1.ApiProperty)({
+        example: 'INV20240520021709',
+        description: 'Номер счета-фактуры',
+    }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], GetParcelDto.prototype, "invoice", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Иванов Иван Иванович', description: 'Отправитель' }),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], GetParcelDto.prototype, "sender", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'Jane Smith', description: 'Имя получателя' }),
+    (0, swagger_1.ApiProperty)({ example: 'Петров Петр Петрович', description: 'Получатель' }),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], GetParcelDto.prototype, "recipient", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'In Transit', description: 'Статус посылки' }),
+    (0, swagger_1.ApiProperty)({ example: 'Санкт-Петербург', description: 'Город' }),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], GetParcelDto.prototype, "status", void 0);
+], GetParcelDto.prototype, "city", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({
-        example: '2024-05-01T14:00:00Z',
-        description: 'Дата отправки',
-    }),
-    __metadata("design:type", Date)
-], GetParcelDto.prototype, "sendDate", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        example: '2024-05-10T14:00:00Z',
-        description: 'Дата получения',
-        required: false,
-    }),
-    __metadata("design:type", Date)
-], GetParcelDto.prototype, "receiveDate", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'INV123456', description: 'Номер накладной' }),
+    (0, swagger_1.ApiProperty)({ example: '150', description: 'Вес' }),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], GetParcelDto.prototype, "invoiceNumber", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 50.5, description: 'Стоимость доставки' }),
-    __metadata("design:type", Number)
-], GetParcelDto.prototype, "deliveryCost", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'TR1234567890', description: 'Трекномер посылки' }),
-    __metadata("design:type", String)
-], GetParcelDto.prototype, "trackingNumber", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        example: 10.5,
-        description: 'Вес посылки (кг)',
-        required: false,
-    }),
-    __metadata("design:type", Number)
 ], GetParcelDto.prototype, "weight", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({
-        example: '30x20x15 cm',
-        description: 'Размеры посылки',
-        required: false,
-    }),
-    __metadata("design:type", String)
-], GetParcelDto.prototype, "dimensions", void 0);
+    (0, swagger_1.ApiProperty)({ example: 3, description: 'Количество' }),
+    (0, class_validator_1.IsInt)(),
+    __metadata("design:type", Number)
+], GetParcelDto.prototype, "quantity", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
-        example: 'Электроника',
-        description: 'Описание содержимого посылки',
-        required: false,
+        example: '2024-05-20T22:54:44Z',
+        description: 'Дата отправки',
     }),
+    (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
-], GetParcelDto.prototype, "contentDescription", void 0);
+], GetParcelDto.prototype, "shipment_date", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        example: 'Груз прибыл в Санкт-Петербург',
+        description: 'Статус',
+    }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], GetParcelDto.prototype, "status", void 0);
 //# sourceMappingURL=base-parcel-dto.js.map

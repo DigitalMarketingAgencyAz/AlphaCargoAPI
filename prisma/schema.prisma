@@ -16,14 +16,34 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  phone     String   @unique
-  fio       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  parcels   Parcel[] // Одно-ко-многим отношение между User и Parcel
+  id               Int                @id @default(autoincrement())
+  email            String             @unique
+  password         String
+  phone            String             @unique
+  fio              String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  // parcels   Parcel[] // Одно-ко-многим отношение между User и Parcel
+  NotificationRead NotificationRead[]
+}
+
+model Notification {
+  id        Int                @id @default(autoincrement())
+  title     String
+  message   String
+  createdAt DateTime           @default(now())
+  reads     NotificationRead[]
+}
+
+model NotificationRead {
+  id             Int          @id @default(autoincrement())
+  userId         Int
+  notificationId Int
+  readAt         DateTime     @default(now())
+  user           User         @relation(fields: [userId], references: [id])
+  notification   Notification @relation(fields: [notificationId], references: [id])
+
+  @@unique([userId, notificationId])
 }
 
 model Country {
@@ -116,21 +136,21 @@ model Request {
   deliveryAddress String
 }
 
-model Parcel {
-  id                 Int       @id @default(autoincrement())
-  sender             String
-  recipient          String
-  status             String
-  sendDate           DateTime
-  receiveDate        DateTime?
-  invoiceNumber      String    @unique
-  deliveryCost       Float
-  trackingNumber     String    @unique
-  weight             Float?
-  dimensions         String?
-  contentDescription String?
-  userId             Int? // Внешний ключ для связи с моделью User
-  user               User?     @relation(fields: [userId], references: [id])
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-}
+// model Parcel {
+//   id                 Int       @id @default(autoincrement())
+//   sender             String
+//   recipient          String
+//   status             String
+//   sendDate           DateTime
+//   receiveDate        DateTime?
+//   invoiceNumber      String    @unique
+//   deliveryCost       Float
+//   trackingNumber     String    @unique
+//   weight             Float?
+//   dimensions         String?
+//   contentDescription String?
+//   userId             Int? // Внешний ключ для связи с моделью User
+//   user               User?     @relation(fields: [userId], references: [id])
+//   createdAt          DateTime  @default(now())
+//   updatedAt          DateTime  @updatedAt
+// }

@@ -8,36 +8,77 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ParcelsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
+const axios_1 = __importDefault(require("axios"));
 let ParcelsService = class ParcelsService {
     prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async findAll() {
-        return this.prisma.parcel.findMany();
+    getCurrentDate() {
+        const currentDate = new Date();
+        const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}${month}${day}000000`;
+        };
+        const DateEnd = formatDate(currentDate);
+        const DateStart = formatDate(new Date(currentDate.setFullYear(currentDate.getFullYear() - 1)));
+        return { DateEnd, DateStart };
     }
-    async findOne(id) {
-        const parcel = await this.prisma.parcel.findUnique({
-            where: { id },
-        });
-        console.log(parcel);
-        if (!parcel) {
-            throw new common_1.NotFoundException('Посылки с таким id не существует');
+    async findAll(PhoneNumber) {
+        const { DateEnd, DateStart } = this.getCurrentDate();
+        const options = {
+            method: 'POST',
+            url: 'http://212.2.231.34/test/hs/shipment_history',
+            headers: {
+                'Content-Type': 'application/json',
+                'User-Agent': 'insomnia/9.1.1',
+                Authorization: 'Basic d2ViX3VzZXI6ITFNajBjMkc1SEFlRSRqNg==',
+            },
+            data: {
+                PhoneNumber,
+                DateStart,
+                DateEnd,
+            },
+        };
+        try {
+            const { data } = await axios_1.default.request(options);
+            return data;
         }
-        return parcel;
+        catch (error) {
+            console.log(error);
+            throw new common_1.NotFoundException();
+        }
     }
-    async findByTrackingNumber(trackingNumber) {
-        const parcel = await this.prisma.parcel.findUnique({
-            where: { trackingNumber },
-        });
-        if (!parcel) {
-            throw new common_1.NotFoundException('Посылки с таким трек номером не существует');
+    async findOneByInvoiceNumber(InvoiceNumber) {
+        const options = {
+            method: 'POST',
+            url: 'http://212.2.231.34/test/hs/shipment_status',
+            headers: {
+                'Content-Type': 'application/json',
+                'User-Agent': 'insomnia/9.1.1',
+                Authorization: 'Basic d2ViX3VzZXI6ITFNajBjMkc1SEFlRSRqNg==',
+            },
+            data: {
+                InvoiceNumber,
+            },
+        };
+        try {
+            const { data } = await axios_1.default.request(options);
+            return data;
         }
-        return parcel;
+        catch (error) {
+            console.log(error);
+            throw new common_1.NotFoundException();
+        }
     }
 };
 exports.ParcelsService = ParcelsService;

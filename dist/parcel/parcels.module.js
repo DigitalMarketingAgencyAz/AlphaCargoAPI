@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ParcelModule = void 0;
 const common_1 = require("@nestjs/common");
 const parcels_service_1 = require("./parcels.service");
+const parcels_controller_1 = require("./parcels.controller");
 const prisma_service_1 = require("../prisma/prisma.service");
 let ParcelModule = class ParcelModule {
 };
@@ -16,6 +17,7 @@ exports.ParcelModule = ParcelModule;
 exports.ParcelModule = ParcelModule = __decorate([
     (0, common_1.Module)({
         providers: [parcels_service_1.ParcelsService, prisma_service_1.PrismaService],
+        controllers: [parcels_controller_1.ParcelsController],
     })
 ], ParcelModule);
 //# sourceMappingURL=parcels.module.js.map

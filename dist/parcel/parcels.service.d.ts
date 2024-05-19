@@ -3,7 +3,7 @@ import { GetParcelDto } from './dto/base-parcel-dto';
 export declare class ParcelsService {
     private prisma;
     constructor(prisma: PrismaService);
-    findAll(): Promise<GetParcelDto[]>;
-    findOne(id: number): Promise<GetParcelDto | null>;
-    findByTrackingNumber(trackingNumber: string): Promise<GetParcelDto>;
+    private getCurrentDate;
+    findAll(PhoneNumber: string): Promise<GetParcelDto[]>;
+    findOneByInvoiceNumber(InvoiceNumber: string): Promise<GetParcelDto>;
 }

@@ -16,7 +16,6 @@ export class UsersService {
   async getUserParcels(userId: number) {
     return this.prisma.user.findUnique({
       where: { id: userId },
-      include: { parcels: true },
     });
   }
 
@@ -83,6 +82,7 @@ export class UsersService {
         id: true,
         email: true,
         phone: true,
+        fio: true,
       },
     });
 
