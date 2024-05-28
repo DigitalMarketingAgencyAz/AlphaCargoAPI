@@ -25,7 +25,7 @@ let AuthController = class AuthController {
         this.authService = authService;
     }
     signIn(signInDto) {
-        return this.authService.signIn(signInDto.email, signInDto.password);
+        return this.authService.signIn(signInDto.phone, signInDto.password);
     }
     signUp(signUpDto) {
         const payload = {

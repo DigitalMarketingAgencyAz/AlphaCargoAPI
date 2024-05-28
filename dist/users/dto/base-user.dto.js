@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoginDto = exports.LoginResDto = exports.BaseUserRes = exports.BaseUserReq = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
+const is_valid_number_decorator_1 = require("../decorators/is-valid-number.decorator");
 class BaseUserReq {
     email;
     phone;
@@ -120,18 +121,20 @@ __decorate([
     __metadata("design:type", String)
 ], LoginResDto.prototype, "phone", void 0);
 class LoginDto {
-    email;
+    phone;
     password;
 }
 exports.LoginDto = LoginDto;
 __decorate([
     (0, swagger_1.ApiProperty)({
-        description: 'User email',
-        example: 'user@example.com',
+        description: 'User phone',
+        example: '+7123456789',
     }),
-    (0, class_validator_1.IsEmail)({}, { message: 'Неправильный формат email' }),
+    (0, class_validator_1.IsString)(),
+    (0, is_valid_number_decorator_1.IsValidPhoneNumber)(['KG', 'KZ', 'RU']),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], LoginDto.prototype, "email", void 0);
+], LoginDto.prototype, "phone", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: 'User password',

@@ -14,9 +14,9 @@ export declare class UsersService {
         createdAt: Date;
         updatedAt: Date;
     }>;
-    findOneByEmail(email: string): Promise<User | null>;
     findOneById(id: number): Promise<Omit<User, 'password'> | null>;
     findOneByPhone(phone: string): Promise<User | null>;
+    findOneByEmail(email: string): Promise<User | null>;
     update(id: number, updateUserDto: UpdateUserReqDto): Promise<CreateUserResDto>;
     create(createUserDto: Prisma.UserCreateInput): Promise<CreateUserResDto>;
 }

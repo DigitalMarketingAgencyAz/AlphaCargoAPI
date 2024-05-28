@@ -19,14 +19,6 @@ export class UsersService {
     });
   }
 
-  async findOneByEmail(email: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
-  }
-
   async findOneById(id: number): Promise<Omit<User, 'password'> | null> {
     const user = this.prisma.user.findUnique({
       where: {
@@ -51,6 +43,14 @@ export class UsersService {
     return this.prisma.user.findUnique({
       where: {
         phone,
+      },
+    });
+  }
+
+  async findOneByEmail(email: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: {
+        email,
       },
     });
   }

@@ -44,8 +44,8 @@ let AuthService = class AuthService {
         this.usersService = usersService;
         this.jwtService = jwtService;
     }
-    async signIn(email, pass) {
-        const user = await this.usersService.findOneByEmail(email);
+    async signIn(phone, pass) {
+        const user = await this.usersService.findOneByPhone(phone);
         if (user) {
             const isPasswordMatch = await bcrypt.compare(pass, user?.password);
             if (isPasswordMatch) {
@@ -57,6 +57,7 @@ let AuthService = class AuthService {
                     id: user.id,
                     phone: user.phone,
                     fio: user.fio,
+                    email: user.email,
                 };
             }
         }

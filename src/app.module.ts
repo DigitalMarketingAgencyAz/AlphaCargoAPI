@@ -17,22 +17,23 @@ import { CalculatorModule } from './calculator/calculator.module';
 import { BagModule } from './bag/bag.module';
 import { ParcelTypeModule } from './parceltype/parcel-type.module';
 import { NotificationModule } from './notification/notification.module';
+import { ResumeModule } from './resume/resume.module';
 
 const randomFilename = () => {
   return uuidv4();
 };
 
-const DEFAULT_ADMIN = {
-  email: 'admin@example.com',
-  password: 'alphacargopassword123!',
-};
+// const DEFAULT_ADMIN = {
+//   email: 'admin@example.com',
+//   password: 'alphacargopassword123!',
+// };
 
-const authenticate = async (email: string, password: string) => {
-  if (email === DEFAULT_ADMIN.email && password === DEFAULT_ADMIN.password) {
-    return Promise.resolve(DEFAULT_ADMIN);
-  }
-  return null;
-};
+// const authenticate = async (email: string, password: string) => {
+//   if (email === DEFAULT_ADMIN.email && password === DEFAULT_ADMIN.password) {
+//     return Promise.resolve(DEFAULT_ADMIN);
+//   }
+//   return null;
+// };
 @Module({
   imports: [
     import('@adminjs/nestjs').then(({ AdminModule }) =>
@@ -369,6 +370,39 @@ const authenticate = async (email: string, password: string) => {
                 },
                 {
                   resource: {
+                    model: getModelByName('Resume'),
+                    client: prisma,
+                  },
+                  features: [
+                    uploadFeature({
+                      componentLoader,
+                      provider: {
+                        local: {
+                          bucket: '/',
+                          opts: { baseUrl: '/.' },
+                        },
+                      },
+                      properties: {
+                        key: 'resumeFile',
+                        mimeType: 'mimeType',
+                      },
+                      validation: {
+                        mimeTypes: [
+                          'application/pdf',
+                          'application/msword',
+                          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        ],
+                      },
+                      uploadPath: (record, filename) => {
+                        const extension = filename.split('.').pop();
+                        const randomName = randomFilename();
+                        return `resumes/${record.id()}/${randomName}.${extension}`;
+                      },
+                    }),
+                  ],
+                },
+                {
+                  resource: {
                     model: getModelByName('Service'),
                     client: prisma,
                   },
@@ -395,11 +429,11 @@ const authenticate = async (email: string, password: string) => {
                 },
               ],
             },
-            auth: {
-              authenticate,
-              cookieName: 'adminjs',
-              cookiePassword: 'secret',
-            },
+            // auth: {
+            //   authenticate,
+            //   cookieName: 'adminjs',
+            //   cookiePassword: 'secret',
+            // },
             sessionOptions: {
               resave: true,
               saveUninitialized: true,
@@ -425,6 +459,7 @@ const authenticate = async (email: string, password: string) => {
     BagModule,
     ParcelTypeModule,
     NotificationModule,
+    ResumeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

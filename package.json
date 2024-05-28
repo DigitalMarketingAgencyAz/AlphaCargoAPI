@@ -40,6 +40,7 @@
     "date-fns": "^3.6.0",
     "express-formidable": "^1.2.0",
     "express-session": "^1.18.0",
+    "file-type-mime": "^0.3.10",
     "libphonenumber-js": "^1.10.61",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.0",

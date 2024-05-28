@@ -9,6 +9,7 @@ export declare class AuthController {
         id: number;
         phone: string;
         fio: string;
+        email: string;
     }>;
     signUp(signUpDto: CreateUserReqDto): Promise<CreateUserResDto>;
 }

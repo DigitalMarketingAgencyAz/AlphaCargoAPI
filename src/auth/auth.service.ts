@@ -10,8 +10,8 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
-  async signIn(email: string, pass: string) {
-    const user = await this.usersService.findOneByEmail(email);
+  async signIn(phone: string, pass: string) {
+    const user = await this.usersService.findOneByPhone(phone);
     if (user) {
       const isPasswordMatch = await bcrypt.compare(pass, user?.password);
       if (isPasswordMatch) {
@@ -23,6 +23,7 @@ export class AuthService {
           id: user.id,
           phone: user.phone,
           fio: user.fio,
+          email: user.email,
         };
       }
     }

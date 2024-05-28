@@ -26,18 +26,9 @@ const calculator_module_1 = require("./calculator/calculator.module");
 const bag_module_1 = require("./bag/bag.module");
 const parcel_type_module_1 = require("./parceltype/parcel-type.module");
 const notification_module_1 = require("./notification/notification.module");
+const resume_module_1 = require("./resume/resume.module");
 const randomFilename = () => {
     return (0, uuid_1.v4)();
-};
-const DEFAULT_ADMIN = {
-    email: 'admin@example.com',
-    password: 'alphacargopassword123!',
-};
-const authenticate = async (email, password) => {
-    if (email === DEFAULT_ADMIN.email && password === DEFAULT_ADMIN.password) {
-        return Promise.resolve(DEFAULT_ADMIN);
-    }
-    return null;
 };
 let AppModule = class AppModule {
 };
@@ -342,6 +333,39 @@ exports.AppModule = AppModule = __decorate([
                                 },
                                 {
                                     resource: {
+                                        model: getModelByName('Resume'),
+                                        client: prisma,
+                                    },
+                                    features: [
+                                        uploadFeature({
+                                            componentLoader,
+                                            provider: {
+                                                local: {
+                                                    bucket: '/',
+                                                    opts: { baseUrl: '/.' },
+                                                },
+                                            },
+                                            properties: {
+                                                key: 'resumeFile',
+                                                mimeType: 'mimeType',
+                                            },
+                                            validation: {
+                                                mimeTypes: [
+                                                    'application/pdf',
+                                                    'application/msword',
+                                                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                                                ],
+                                            },
+                                            uploadPath: (record, filename) => {
+                                                const extension = filename.split('.').pop();
+                                                const randomName = randomFilename();
+                                                return `resumes/${record.id()}/${randomName}.${extension}`;
+                                            },
+                                        }),
+                                    ],
+                                },
+                                {
+                                    resource: {
                                         model: getModelByName('Service'),
                                         client: prisma,
                                     },
@@ -368,11 +392,6 @@ exports.AppModule = AppModule = __decorate([
                                 },
                             ],
                         },
-                        auth: {
-                            authenticate,
-                            cookieName: 'adminjs',
-                            cookiePassword: 'secret',
-                        },
                         sessionOptions: {
                             resave: true,
                             saveUninitialized: true,
@@ -397,6 +416,7 @@ exports.AppModule = AppModule = __decorate([
             bag_module_1.BagModule,
             parcel_type_module_1.ParcelTypeModule,
             notification_module_1.NotificationModule,
+            resume_module_1.ResumeModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

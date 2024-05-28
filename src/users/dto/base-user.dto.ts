@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { IsValidPhoneNumber } from '../decorators/is-valid-number.decorator';
 
 export class BaseUserReq {
   @ApiProperty({
@@ -80,11 +81,13 @@ export class LoginResDto {
 }
 export class LoginDto {
   @ApiProperty({
-    description: 'User email',
-    example: 'user@example.com',
+    description: 'User phone',
+    example: '+7123456789',
   })
-  @IsEmail({}, { message: 'Неправильный формат email' })
-  email: string;
+  @IsString()
+  @IsValidPhoneNumber(['KG', 'KZ', 'RU'])
+  @IsNotEmpty()
+  phone: string;
 
   @ApiProperty({
     description: 'User password',

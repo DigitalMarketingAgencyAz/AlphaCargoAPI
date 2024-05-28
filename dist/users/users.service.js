@@ -46,13 +46,6 @@ let UsersService = class UsersService {
             where: { id: userId },
         });
     }
-    async findOneByEmail(email) {
-        return this.prisma.user.findUnique({
-            where: {
-                email,
-            },
-        });
-    }
     async findOneById(id) {
         const user = this.prisma.user.findUnique({
             where: {
@@ -76,6 +69,13 @@ let UsersService = class UsersService {
         return this.prisma.user.findUnique({
             where: {
                 phone,
+            },
+        });
+    }
+    async findOneByEmail(email) {
+        return this.prisma.user.findUnique({
+            where: {
+                email,
             },
         });
     }

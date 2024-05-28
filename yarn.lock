@@ -5826,6 +5826,11 @@ file-entry-cache@^6.0.1:
   dependencies:
     flat-cache "^3.0.4"
 
+file-type-mime@^0.3.10:
+  version "0.3.10"
+  resolved "https://registry.yarnpkg.com/file-type-mime/-/file-type-mime-0.3.10.tgz#0cefaf595a3b1624e6c99d83100049a878390dbe"
+  integrity sha512-VzzSOoRehn8M9c5ckYrlurv7GxJBA7lvetMJ1sP9AHlwv1+1ZwREZhta7ndtg1QNR1HiuX2656Dq3okfG3qI4w==
+
 fill-range@^7.0.1:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/fill-range/-/fill-range-7.0.1.tgz#1919a6a7c75fe38b2c7c77e5198535da9acdda40"

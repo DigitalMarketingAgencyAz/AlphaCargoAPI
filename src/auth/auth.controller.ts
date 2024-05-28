@@ -22,7 +22,7 @@ export class AuthController {
   })
   @ApiBody({ type: LoginDto })
   signIn(@Body() signInDto: LoginDto) {
-    return this.authService.signIn(signInDto.email, signInDto.password);
+    return this.authService.signIn(signInDto.phone, signInDto.password);
   }
   @Public()
   @HttpCode(HttpStatus.CREATED)
