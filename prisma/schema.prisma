@@ -58,6 +58,8 @@ model NotificationRead {
 model Country {
   id          Int      @id @default(autoincrement())
   countryname String   @unique
+  lat         String
+  lng         String
   cities      City[]
   offices     Office[]
 }

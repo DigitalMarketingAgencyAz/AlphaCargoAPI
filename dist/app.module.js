@@ -125,6 +125,8 @@ exports.AppModule = AppModule = __decorate([
                                             Request: 'Заявки',
                                             Service: 'Услуги',
                                             Notification: 'Уведомления',
+                                            Resume: 'Резюме',
+                                            Contract: 'Договора',
                                             navigation: 'Навигация',
                                             pages: 'Страницы',
                                             selectedRecords: 'Выбрано ({{selected}})',
