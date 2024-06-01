@@ -167,6 +167,14 @@ exports.AppModule = AppModule = __decorate([
                                             description: 'Описание',
                                             cityFrom: 'Город отправления',
                                             cityTo: 'Город доставки',
+                                            organizationalStructure: 'Организационная структура',
+                                            organizationName: 'Название организации',
+                                            inn: 'ИНН',
+                                            contactPhone: 'Телефон',
+                                            desiredPosition: 'Желаемая должность',
+                                            desiredSalary: 'Желаемая ЗП',
+                                            resumeFile: 'Файл резюме',
+                                            file: 'Файл',
                                         },
                                         messages: {
                                             successfullyBulkDeleted: 'Успешно удалено {{count}} запись',
@@ -293,6 +301,17 @@ exports.AppModule = AppModule = __decorate([
                                         properties: {
                                             id: { isVisible: false },
                                             countryname: { isTitle: true },
+                                        },
+                                    },
+                                },
+                                {
+                                    resource: {
+                                        model: getModelByName('Contract'),
+                                        client: prisma,
+                                    },
+                                    options: {
+                                        properties: {
+                                            id: { isVisible: false },
                                         },
                                     },
                                 },

@@ -131,6 +131,8 @@ const randomFilename = () => {
                       Request: 'Заявки',
                       Service: 'Услуги',
                       Notification: 'Уведомления',
+                      Resume: 'Резюме',
+                      Contract: 'Договора',
                       navigation: 'Навигация',
                       pages: 'Страницы',
                       selectedRecords: 'Выбрано ({{selected}})',
@@ -173,6 +175,14 @@ const randomFilename = () => {
                       description: 'Описание',
                       cityFrom: 'Город отправления',
                       cityTo: 'Город доставки',
+                      organizationalStructure: 'Организационная структура',
+                      organizationName: 'Название организации',
+                      inn: 'ИНН',
+                      contactPhone: 'Телефон',
+                      desiredPosition: 'Желаемая должность',
+                      desiredSalary: 'Желаемая ЗП',
+                      resumeFile: 'Файл резюме',
+                      file: 'Файл',
                     },
                     messages: {
                       successfullyBulkDeleted:
@@ -330,6 +340,17 @@ const randomFilename = () => {
                     properties: {
                       id: { isVisible: false },
                       countryname: { isTitle: true },
+                    },
+                  },
+                },
+                {
+                  resource: {
+                    model: getModelByName('Contract'),
+                    client: prisma,
+                  },
+                  options: {
+                    properties: {
+                      id: { isVisible: false },
                     },
                   },
                 },

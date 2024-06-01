@@ -11,8 +11,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // url      = "postgresql://user:password@localhost:55432/alphacargo"
-  url      = "postgresql://doadmin:AVNS_AQChFj4yUTXSX2PSHFx@db-postgresql-ams3-19323-do-user-15530903-0.c.db.ondigitalocean.com:25060/alphacargo?sslmode=require"
+  url      = "postgresql://user:password@localhost:55432/alphacargo"
+  // url      = "postgresql://doadmin:AVNS_AQChFj4yUTXSX2PSHFx@db-postgresql-ams3-19323-do-user-15530903-0.c.db.ondigitalocean.com:25060/alphacargo?sslmode=require"
 }
 
 model User {
