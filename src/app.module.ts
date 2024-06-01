@@ -18,6 +18,7 @@ import { BagModule } from './bag/bag.module';
 import { ParcelTypeModule } from './parceltype/parcel-type.module';
 import { NotificationModule } from './notification/notification.module';
 import { ResumeModule } from './resume/resume.module';
+import { ContractsModule } from './contracts/contracts.module';
 
 const randomFilename = () => {
   return uuidv4();
@@ -460,6 +461,7 @@ const randomFilename = () => {
     ParcelTypeModule,
     NotificationModule,
     ResumeModule,
+    ContractsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

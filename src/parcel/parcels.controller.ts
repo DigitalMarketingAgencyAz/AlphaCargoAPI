@@ -1,4 +1,11 @@
-import { Controller, Get, UseGuards, Req, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Req,
+  Param,
+  NotFoundException,
+} from '@nestjs/common';
 import { ParcelsService } from './parcels.service';
 import { GetParcelDto } from './dto/base-parcel-dto';
 import {
@@ -9,11 +16,13 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { GetParcelStatusDto } from './dto/base-parcel-status.dto';
+import { Public } from 'src/auth/public-strategy';
 
 @ApiTags('parcels')
 @Controller('parcels')
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
+@Public()
 export class ParcelsController {
   constructor(private parcelsService: ParcelsService) {}
 
@@ -40,5 +49,20 @@ export class ParcelsController {
     @Param('invoiceNumber') invoiceNumber: string,
   ): Promise<GetParcelStatusDto> {
     return this.parcelsService.findOneByInvoiceNumber(invoiceNumber);
+  }
+
+  @Get('/invoice/:invoiceNumber/pdf')
+  @ApiOperation({ summary: 'Получить PDF файл по invoiceNumber' })
+  @ApiResponse({
+    status: 200,
+    description: 'PDF файл посылки',
+    content: { 'application/pdf': {} },
+  })
+  async getInvoicePdf(@Param('invoiceNumber') invoiceNumber: string) {
+    const pdfBuffer = await this.parcelsService.getInvoicePdf(invoiceNumber);
+    if (!pdfBuffer) {
+      throw new NotFoundException('PDF не найден');
+    }
+    return pdfBuffer;
   }
 }

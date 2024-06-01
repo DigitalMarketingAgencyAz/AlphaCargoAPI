@@ -27,6 +27,15 @@ model User {
   NotificationRead NotificationRead[]
 }
 
+model Contract {
+  id                      Int    @id @default(autoincrement())
+  organizationalStructure String
+  organizationName        String
+  inn                     String
+  email                   String
+  contactPhone            String
+}
+
 model Notification {
   id        Int                @id @default(autoincrement())
   title     String

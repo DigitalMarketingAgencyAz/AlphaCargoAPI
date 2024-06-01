@@ -18,6 +18,7 @@ const parcels_service_1 = require("./parcels.service");
 const base_parcel_dto_1 = require("./dto/base-parcel-dto");
 const swagger_1 = require("@nestjs/swagger");
 const auth_guard_1 = require("../auth/auth.guard");
+const public_strategy_1 = require("../auth/public-strategy");
 let ParcelsController = class ParcelsController {
     parcelsService;
     constructor(parcelsService) {
@@ -29,6 +30,13 @@ let ParcelsController = class ParcelsController {
     }
     async findOne(invoiceNumber) {
         return this.parcelsService.findOneByInvoiceNumber(invoiceNumber);
+    }
+    async getInvoicePdf(invoiceNumber) {
+        const pdfBuffer = await this.parcelsService.getInvoicePdf(invoiceNumber);
+        if (!pdfBuffer) {
+            throw new common_1.NotFoundException('PDF не найден');
+        }
+        return pdfBuffer;
     }
 };
 exports.ParcelsController = ParcelsController;
@@ -58,11 +66,25 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], ParcelsController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Get)('/invoice/:invoiceNumber/pdf'),
+    (0, swagger_1.ApiOperation)({ summary: 'Получить PDF файл по invoiceNumber' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'PDF файл посылки',
+        content: { 'application/pdf': {} },
+    }),
+    __param(0, (0, common_1.Param)('invoiceNumber')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ParcelsController.prototype, "getInvoicePdf", null);
 exports.ParcelsController = ParcelsController = __decorate([
     (0, swagger_1.ApiTags)('parcels'),
     (0, common_1.Controller)('parcels'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, public_strategy_1.Public)(),
     __metadata("design:paramtypes", [parcels_service_1.ParcelsService])
 ], ParcelsController);
 //# sourceMappingURL=parcels.controller.js.map

@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service'; // Импортируем ваш сервис Prisma
-// import { GetParcelDto } from './dto/base-parcel-dto';
 import axios from 'axios';
 import { GetParcelDto } from './dto/base-parcel-dto';
+import { authorization } from './constants';
 @Injectable()
 export class ParcelsService {
   constructor(private prisma: PrismaService) {}
@@ -28,8 +28,7 @@ export class ParcelsService {
       url: 'http://212.2.231.34/test/hs/shipment_history',
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'insomnia/9.1.1',
-        Authorization: 'Basic d2ViX3VzZXI6ITFNajBjMkc1SEFlRSRqNg==',
+        Authorization: authorization,
       },
       data: {
         PhoneNumber,
@@ -52,8 +51,7 @@ export class ParcelsService {
       url: 'http://212.2.231.34/test/hs/shipment_status',
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'insomnia/9.1.1',
-        Authorization: 'Basic d2ViX3VzZXI6ITFNajBjMkc1SEFlRSRqNg==',
+        Authorization: authorization,
       },
       data: {
         InvoiceNumber,
@@ -65,6 +63,33 @@ export class ParcelsService {
     } catch (error) {
       console.log(error);
       throw new NotFoundException();
+    }
+  }
+
+  async getInvoicePdf(invoiceNumber: string): Promise<Buffer> {
+    const options = {
+      method: 'POST',
+      url: 'http://212.2.231.34/test/hs/get_pdf',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization,
+      },
+      data: {
+        InvoiceNumber: invoiceNumber,
+      },
+    };
+
+    try {
+      const { data } = await axios.request(options);
+      if (!data || !data.pdf) {
+        throw new NotFoundException('PDF не найден');
+      }
+
+      const pdfBuffer = data.pdf;
+      return pdfBuffer;
+    } catch (error) {
+      console.error(error);
+      throw new NotFoundException('PDF не найден');
     }
   }
 }

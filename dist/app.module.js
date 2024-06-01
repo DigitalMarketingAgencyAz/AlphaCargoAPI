@@ -27,6 +27,7 @@ const bag_module_1 = require("./bag/bag.module");
 const parcel_type_module_1 = require("./parceltype/parcel-type.module");
 const notification_module_1 = require("./notification/notification.module");
 const resume_module_1 = require("./resume/resume.module");
+const contracts_module_1 = require("./contracts/contracts.module");
 const randomFilename = () => {
     return (0, uuid_1.v4)();
 };
@@ -417,6 +418,7 @@ exports.AppModule = AppModule = __decorate([
             parcel_type_module_1.ParcelTypeModule,
             notification_module_1.NotificationModule,
             resume_module_1.ResumeModule,
+            contracts_module_1.ContractsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

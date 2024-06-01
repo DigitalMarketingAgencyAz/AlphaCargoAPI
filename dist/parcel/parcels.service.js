@@ -16,6 +16,7 @@ exports.ParcelsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const axios_1 = __importDefault(require("axios"));
+const constants_1 = require("./constants");
 let ParcelsService = class ParcelsService {
     prisma;
     constructor(prisma) {
@@ -40,8 +41,7 @@ let ParcelsService = class ParcelsService {
             url: 'http://212.2.231.34/test/hs/shipment_history',
             headers: {
                 'Content-Type': 'application/json',
-                'User-Agent': 'insomnia/9.1.1',
-                Authorization: 'Basic d2ViX3VzZXI6ITFNajBjMkc1SEFlRSRqNg==',
+                Authorization: constants_1.authorization,
             },
             data: {
                 PhoneNumber,
@@ -64,8 +64,7 @@ let ParcelsService = class ParcelsService {
             url: 'http://212.2.231.34/test/hs/shipment_status',
             headers: {
                 'Content-Type': 'application/json',
-                'User-Agent': 'insomnia/9.1.1',
-                Authorization: 'Basic d2ViX3VzZXI6ITFNajBjMkc1SEFlRSRqNg==',
+                Authorization: constants_1.authorization,
             },
             data: {
                 InvoiceNumber,
@@ -78,6 +77,31 @@ let ParcelsService = class ParcelsService {
         catch (error) {
             console.log(error);
             throw new common_1.NotFoundException();
+        }
+    }
+    async getInvoicePdf(invoiceNumber) {
+        const options = {
+            method: 'POST',
+            url: 'http://212.2.231.34/test/hs/get_pdf',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: constants_1.authorization,
+            },
+            data: {
+                InvoiceNumber: invoiceNumber,
+            },
+        };
+        try {
+            const { data } = await axios_1.default.request(options);
+            if (!data || !data.pdf) {
+                throw new common_1.NotFoundException('PDF не найден');
+            }
+            const pdfBuffer = data.pdf;
+            return pdfBuffer;
+        }
+        catch (error) {
+            console.error(error);
+            throw new common_1.NotFoundException('PDF не найден');
         }
     }
 };
