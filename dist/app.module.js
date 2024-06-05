@@ -28,10 +28,15 @@ const parcel_type_module_1 = require("./parceltype/parcel-type.module");
 const notification_module_1 = require("./notification/notification.module");
 const resume_module_1 = require("./resume/resume.module");
 const contracts_module_1 = require("./contracts/contracts.module");
+const logger_middleware_1 = require("./middlewares/logger.middleware");
+const prisma_module_1 = require("./prisma/prisma.module");
 const randomFilename = () => {
     return (0, uuid_1.v4)();
 };
 let AppModule = class AppModule {
+    configure(consumer) {
+        consumer.apply(logger_middleware_1.AppLoggerMiddleware).forRoutes('*');
+    }
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
@@ -46,7 +51,31 @@ exports.AppModule = AppModule = __decorate([
                         Database: AdminJSPrisma.Database,
                     });
                     const { getModelByName } = await import('@adminjs/prisma');
-                    const prisma = new client_1.PrismaClient();
+                    const prisma = new client_1.PrismaClient({
+                        log: [
+                            {
+                                emit: 'event',
+                                level: 'query',
+                            },
+                            {
+                                emit: 'stdout',
+                                level: 'error',
+                            },
+                            {
+                                emit: 'stdout',
+                                level: 'info',
+                            },
+                            {
+                                emit: 'stdout',
+                                level: 'warn',
+                            },
+                        ],
+                    });
+                    prisma.$on('query', (e) => {
+                        console.log('Query: ' + e.query);
+                        console.log('Params: ' + e.params);
+                        console.log('Duration: ' + e.duration + 'ms');
+                    });
                     const uploadModule = await import('@adminjs/upload');
                     const componentLoader = new ComponentLoader();
                     const uploadFeature = uploadModule.default;
@@ -440,6 +469,7 @@ exports.AppModule = AppModule = __decorate([
             notification_module_1.NotificationModule,
             resume_module_1.ResumeModule,
             contracts_module_1.ContractsModule,
+            prisma_module_1.PrismaModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -19,6 +19,8 @@ import { ParcelTypeModule } from './parceltype/parcel-type.module';
 import { NotificationModule } from './notification/notification.module';
 import { ResumeModule } from './resume/resume.module';
 import { ContractsModule } from './contracts/contracts.module';
+import { AppLoggerMiddleware } from './middlewares/logger.middleware';
+import { PrismaModule } from './prisma/prisma.module';
 
 const randomFilename = () => {
   return uuidv4();
@@ -47,7 +49,32 @@ const randomFilename = () => {
             Database: AdminJSPrisma.Database,
           });
           const { getModelByName } = await import('@adminjs/prisma');
-          const prisma = new PrismaClient();
+          const prisma = new PrismaClient({
+            log: [
+              {
+                emit: 'event',
+                level: 'query',
+              },
+              {
+                emit: 'stdout',
+                level: 'error',
+              },
+              {
+                emit: 'stdout',
+                level: 'info',
+              },
+              {
+                emit: 'stdout',
+                level: 'warn',
+              },
+            ],
+          });
+
+          prisma.$on('query', (e) => {
+            console.log('Query: ' + e.query);
+            console.log('Params: ' + e.params);
+            console.log('Duration: ' + e.duration + 'ms');
+          });
           const uploadModule = await import('@adminjs/upload');
           const componentLoader = new ComponentLoader();
           const uploadFeature = uploadModule.default;
@@ -483,8 +510,13 @@ const randomFilename = () => {
     NotificationModule,
     ResumeModule,
     ContractsModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(AppLoggerMiddleware).forRoutes('*');
+  }
+}

@@ -16,13 +16,11 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { GetParcelStatusDto } from './dto/base-parcel-status.dto';
-import { Public } from 'src/auth/public-strategy';
 
 @ApiTags('parcels')
 @Controller('parcels')
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
-@Public()
 export class ParcelsController {
   constructor(private parcelsService: ParcelsService) {}
 

@@ -18,7 +18,6 @@ const parcels_service_1 = require("./parcels.service");
 const base_parcel_dto_1 = require("./dto/base-parcel-dto");
 const swagger_1 = require("@nestjs/swagger");
 const auth_guard_1 = require("../auth/auth.guard");
-const public_strategy_1 = require("../auth/public-strategy");
 let ParcelsController = class ParcelsController {
     parcelsService;
     constructor(parcelsService) {
@@ -84,7 +83,6 @@ exports.ParcelsController = ParcelsController = __decorate([
     (0, common_1.Controller)('parcels'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
-    (0, public_strategy_1.Public)(),
     __metadata("design:paramtypes", [parcels_service_1.ParcelsService])
 ], ParcelsController);
 //# sourceMappingURL=parcels.controller.js.map

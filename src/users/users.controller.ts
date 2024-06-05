@@ -29,7 +29,7 @@ import { UpdateUserReqDto, UpdateUserResDto } from './dto/update-user.dto';
 export class UserController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get('')
+  @Get()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get user information' })
   @ApiResponse({

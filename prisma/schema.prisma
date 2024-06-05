@@ -11,8 +11,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // url      = "postgresql://user:password@localhost:55432/alphacargo"
-  url      = "postgresql://doadmin:AVNS_AQChFj4yUTXSX2PSHFx@db-postgresql-ams3-19323-do-user-15530903-0.c.db.ondigitalocean.com:25060/alphacargo?sslmode=require"
+  // url      = "postgresql://user:password@localhost:55432/alphacargo?connection_limit=5"
+  url      = "postgresql://doadmin:AVNS_AQChFj4yUTXSX2PSHFx@db-postgresql-ams3-19323-do-user-15530903-0.c.db.ondigitalocean.com:25060/alphacargo?sslmode=require&connection_limit=5"
 }
 
 model User {
@@ -58,8 +58,6 @@ model NotificationRead {
 model Country {
   id          Int      @id @default(autoincrement())
   countryname String   @unique
-  lat         String
-  lng         String
   cities      City[]
   offices     Office[]
 }
@@ -133,6 +131,8 @@ model Office {
   country        Country @relation(fields: [countryId], references: [id])
   openingHour    Int // Время открытия (в 24-часовом формате)
   closingHour    Int
+  lat            String?
+  lng            String?
 }
 
 model Franchise {

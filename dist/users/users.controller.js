@@ -41,7 +41,7 @@ let UserController = class UserController {
 };
 exports.UserController = UserController;
 __decorate([
-    (0, common_1.Get)(''),
+    (0, common_1.Get)(),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({ summary: 'Get user information' }),
     (0, swagger_1.ApiResponse)({
