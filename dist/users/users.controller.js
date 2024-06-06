@@ -16,7 +16,6 @@ exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
 const swagger_1 = require("@nestjs/swagger");
-const create_user_dto_1 = require("./dto/create-user.dto");
 const base_user_dto_1 = require("./dto/base-user.dto");
 const auth_guard_1 = require("../auth/auth.guard");
 const update_user_dto_1 = require("./dto/update-user.dto");
@@ -62,7 +61,7 @@ __decorate([
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'User information updated',
-        type: create_user_dto_1.CreateUserResDto,
+        type: update_user_dto_1.UpdateUserResDto,
     }),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),

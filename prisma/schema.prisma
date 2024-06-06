@@ -11,8 +11,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // url      = "postgresql://user:password@localhost:55432/alphacargo?connection_limit=5"
-  url      = "postgresql://doadmin:AVNS_AQChFj4yUTXSX2PSHFx@db-postgresql-ams3-19323-do-user-15530903-0.c.db.ondigitalocean.com:25060/alphacargo?sslmode=require&connection_limit=5"
+  url      = "postgresql://user:password@localhost:55432/alphacargo?connection_limit=5"
+  // url      = "postgresql://doadmin:AVNS_AQChFj4yUTXSX2PSHFx@db-postgresql-ams3-19323-do-user-15530903-0.c.db.ondigitalocean.com:25060/alphacargo?sslmode=require&connection_limit=5"
 }
 
 model User {
@@ -25,6 +25,7 @@ model User {
   updatedAt        DateTime           @updatedAt
   // parcels   Parcel[] // Одно-ко-многим отношение между User и Parcel
   NotificationRead NotificationRead[]
+  TGUsers          TGUsers?
 }
 
 model Contract {
@@ -156,6 +157,22 @@ model Request {
   packageSize     String
   packageCount    Int
   deliveryAddress String
+}
+
+model TGUsers {
+  id      Int    @id @default(autoincrement())
+  chat_id Int    @unique
+  phone   String @unique
+  user    User?  @relation(fields: [userId], references: [id])
+  userId  Int?   @unique
+}
+
+model VerificationCode {
+  id        Int      @id @default(autoincrement())
+  phone     String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
 
 // model Parcel {

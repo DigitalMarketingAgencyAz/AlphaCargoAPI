@@ -94,6 +94,7 @@ class LoginResDto {
     id;
     fio;
     phone;
+    email;
 }
 exports.LoginResDto = LoginResDto;
 __decorate([
@@ -120,6 +121,12 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], LoginResDto.prototype, "phone", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'user email',
+    }),
+    __metadata("design:type", String)
+], LoginResDto.prototype, "email", void 0);
 class LoginDto {
     phone;
     password;

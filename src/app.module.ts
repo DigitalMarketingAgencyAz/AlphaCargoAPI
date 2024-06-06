@@ -21,6 +21,7 @@ import { ResumeModule } from './resume/resume.module';
 import { ContractsModule } from './contracts/contracts.module';
 import { AppLoggerMiddleware } from './middlewares/logger.middleware';
 import { PrismaModule } from './prisma/prisma.module';
+// import { TgbotModule } from './tgbot/tgbot.module';
 
 const randomFilename = () => {
   return uuidv4();
@@ -511,6 +512,11 @@ const randomFilename = () => {
     ResumeModule,
     ContractsModule,
     PrismaModule,
+    // TgbotModule.registerAsync({
+    //   useFactory: async () => ({
+    //     botToken: '7437824568:AAFMKnX_DolPIRbJCmPoqtBSAkwFL10NsXM',
+    //   }),
+    // }),
   ],
   controllers: [AppController],
   providers: [AppService],

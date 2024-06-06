@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
 const prisma_service_1 = require("../prisma/prisma.service");
 const users_controller_1 = require("./users.controller");
+const tgbot_module_1 = require("../tgbot/tgbot.module");
 let UsersModule = class UsersModule {
 };
 exports.UsersModule = UsersModule;
@@ -19,6 +20,14 @@ exports.UsersModule = UsersModule = __decorate([
         controllers: [users_controller_1.UserController],
         providers: [users_service_1.UsersService, prisma_service_1.PrismaService],
         exports: [users_service_1.UsersService],
+        imports: [
+            tgbot_module_1.TgbotModule.registerAsync({
+                useFactory: () => ({
+                    botToken: '7437824568:AAFMKnX_DolPIRbJCmPoqtBSAkwFL10NsXM',
+                }),
+                inject: [],
+            }),
+        ],
     })
 ], UsersModule);
 //# sourceMappingURL=users.module.js.map

@@ -16,6 +16,7 @@ export declare class LoginResDto {
     id: number;
     fio: string;
     phone: string;
+    email: string;
 }
 export declare class LoginDto {
     phone: string;

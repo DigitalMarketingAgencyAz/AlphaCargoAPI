@@ -47,11 +47,11 @@ let AuthService = class AuthService {
     async signIn(phone, pass) {
         const user = await this.usersService.findOneByPhone(phone);
         if (user) {
-            const isPasswordMatch = await bcrypt.compare(pass, user?.password);
+            const isPasswordMatch = await bcrypt.compare(pass, user.password);
             if (isPasswordMatch) {
                 const payload = { id: user.id, email: user.email, phone: user.phone };
                 return {
-                    access_token: await this.jwtService.signAsync(payload, {
+                    accessToken: await this.jwtService.signAsync(payload, {
                         expiresIn: '3h',
                     }),
                     id: user.id,
@@ -63,8 +63,43 @@ let AuthService = class AuthService {
         }
         throw new common_1.UnauthorizedException('Неправильные учетные данные');
     }
+    async signInByPhone(phone) {
+        const user = await this.usersService.findOneByPhone(phone);
+        if (!user) {
+            throw new common_1.UnauthorizedException('Пользователь с таким номером не найден');
+        }
+        const payload = { id: user.id, email: user.email, phone: user.phone };
+        return {
+            accessToken: await this.jwtService.signAsync(payload, {
+                expiresIn: '3h',
+            }),
+            id: user.id,
+            phone: user.phone,
+            fio: user.fio,
+            email: user.email,
+        };
+    }
     async signUp(payload) {
-        const user = await this.usersService.create(payload);
+        const isValid = await this.usersService.verifyCode(payload.phone, payload.code);
+        if (!isValid) {
+            throw new common_1.BadRequestException('Неверный код верификации');
+        }
+        const user = await this.usersService.createUserAfterVerification(payload);
+        return user;
+    }
+    async signUpStep1(phone) {
+        const tgUser = await this.usersService.findOneByPhoneTG(phone);
+        if (!tgUser) {
+            throw new common_1.BadRequestException('Сначала активируйте Telegram бота');
+        }
+        await this.usersService.createVerificationCode(phone);
+    }
+    async signUpStep2(payload) {
+        const isValid = await this.usersService.verifyCode(payload.phone, payload.code);
+        if (!isValid) {
+            throw new common_1.BadRequestException('Неверный код верификации');
+        }
+        const user = await this.usersService.createUserAfterVerification(payload);
         return user;
     }
 };

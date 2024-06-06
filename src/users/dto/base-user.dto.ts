@@ -78,7 +78,13 @@ export class LoginResDto {
     description: 'user phone',
   })
   phone: string;
+
+  @ApiProperty({
+    description: 'user email',
+  })
+  email: string;
 }
+
 export class LoginDto {
   @ApiProperty({
     description: 'User phone',

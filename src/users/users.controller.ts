@@ -17,7 +17,6 @@ import {
   ApiBody,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { CreateUserResDto } from './dto/create-user.dto';
 import { BaseUserReq, BaseUserRes } from './dto/base-user.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UpdateUserReqDto, UpdateUserResDto } from './dto/update-user.dto';
@@ -54,7 +53,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'User information updated',
-    type: CreateUserResDto,
+    type: UpdateUserResDto,
   })
   async updateUser(
     @Req() request,
