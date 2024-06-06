@@ -97,9 +97,9 @@ let UsersService = class UsersService {
     }
     async findOneByPhoneTG(phone) {
         const findPhone = phone.replace(/\D/g, '');
-        return this.prisma.tGUsers.findUnique({
+        return this.prisma.tGUsers.findFirst({
             where: {
-                phone: findPhone,
+                phone: { contains: findPhone },
             },
         });
     }
@@ -128,7 +128,9 @@ let UsersService = class UsersService {
         });
         const findPhone = phone.replace(/\D/g, '');
         const tgUser = await this.prisma.tGUsers.findFirst({
-            where: { phone: findPhone },
+            where: {
+                phone: { contains: findPhone },
+            },
         });
         console.log(tgUser, findPhone, 'line134');
         if (tgUser) {
@@ -147,14 +149,16 @@ let UsersService = class UsersService {
             throw new common_1.BadRequestException('Неверный код верификации');
         }
         if ((0, date_fns_1.isBefore)(new Date(), verification.expiresAt)) {
-            await this.prisma.verificationCode.delete({
-                where: { id: verification.id },
-            });
             return true;
         }
         else {
             throw new common_1.BadRequestException('Код верификации истек');
         }
+    }
+    async deleteVerificationCode(phone, code) {
+        await this.prisma.verificationCode.deleteMany({
+            where: { phone, code },
+        });
     }
     async createUserAfterVerification(createUserDto) {
         const existingUserByEmail = await this.findOneByEmail(createUserDto.email);
@@ -167,8 +171,9 @@ let UsersService = class UsersService {
         }
         const findPhone = createUserDto.phone.replace(/\D/g, '');
         const tgUser = await this.prisma.tGUsers.findFirst({
-            where: { phone: findPhone },
+            where: { phone: { contains: findPhone } },
         });
+        console.log('line187', tgUser, findPhone);
         if (!tgUser) {
             throw new common_1.BadRequestException('Сначала активируйте Telegram бота');
         }
@@ -188,7 +193,7 @@ let UsersService = class UsersService {
             },
         });
         await this.prisma.tGUsers.update({
-            where: { phone: findPhone },
+            where: { phone: createUserDto.phone },
             data: { userId: createdUser.id },
         });
         return createdUser;

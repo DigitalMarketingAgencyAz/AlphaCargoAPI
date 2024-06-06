@@ -2,6 +2,7 @@ import {
   Injectable,
   UnauthorizedException,
   BadRequestException,
+  ConflictException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
@@ -63,8 +64,19 @@ export class AuthService {
       throw new BadRequestException('Неверный код верификации');
     }
 
-    const user = await this.usersService.createUserAfterVerification(payload);
-    return user;
+    try {
+      const user = await this.usersService.createUserAfterVerification(payload);
+      await this.usersService.deleteVerificationCode(
+        payload.phone,
+        payload.code,
+      );
+      return user;
+    } catch (error) {
+      if (error instanceof ConflictException) {
+        throw new ConflictException(error.message);
+      }
+      throw new BadRequestException('Ошибка при создании пользователя');
+    }
   }
 
   async signUpStep1(phone: string) {
@@ -85,7 +97,18 @@ export class AuthService {
       throw new BadRequestException('Неверный код верификации');
     }
 
-    const user = await this.usersService.createUserAfterVerification(payload);
-    return user;
+    try {
+      const user = await this.usersService.createUserAfterVerification(payload);
+      await this.usersService.deleteVerificationCode(
+        payload.phone,
+        payload.code,
+      );
+      return user;
+    } catch (error) {
+      if (error instanceof ConflictException) {
+        throw new ConflictException(error.message);
+      }
+      throw new BadRequestException('Ошибка при создании пользователя');
+    }
   }
 }

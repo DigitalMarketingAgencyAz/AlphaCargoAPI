@@ -84,9 +84,9 @@ export class UsersService {
 
   async findOneByPhoneTG(phone: string): Promise<TGUsers | null> {
     const findPhone = phone.replace(/\D/g, '');
-    return this.prisma.tGUsers.findUnique({
+    return this.prisma.tGUsers.findFirst({
       where: {
-        phone: findPhone,
+        phone: { contains: findPhone },
       },
     });
   }
@@ -128,7 +128,9 @@ export class UsersService {
 
     const findPhone = phone.replace(/\D/g, '');
     const tgUser = await this.prisma.tGUsers.findFirst({
-      where: { phone: findPhone },
+      where: {
+        phone: { contains: findPhone },
+      },
     });
 
     console.log(tgUser, findPhone, 'line134');
@@ -153,13 +155,16 @@ export class UsersService {
     }
 
     if (isBefore(new Date(), verification.expiresAt)) {
-      await this.prisma.verificationCode.delete({
-        where: { id: verification.id },
-      });
       return true;
     } else {
       throw new BadRequestException('Код верификации истек');
     }
+  }
+
+  async deleteVerificationCode(phone: string, code: string): Promise<void> {
+    await this.prisma.verificationCode.deleteMany({
+      where: { phone, code },
+    });
   }
 
   async createUserAfterVerification(
@@ -180,9 +185,9 @@ export class UsersService {
     const findPhone = createUserDto.phone.replace(/\D/g, '');
 
     const tgUser = await this.prisma.tGUsers.findFirst({
-      where: { phone: findPhone },
+      where: { phone: { contains: findPhone } },
     });
-
+    console.log('line187', tgUser, findPhone);
     if (!tgUser) {
       throw new BadRequestException('Сначала активируйте Telegram бота');
     }
@@ -206,7 +211,7 @@ export class UsersService {
       },
     });
     await this.prisma.tGUsers.update({
-      where: { phone: findPhone },
+      where: { phone: createUserDto.phone },
       data: { userId: createdUser.id },
     });
 

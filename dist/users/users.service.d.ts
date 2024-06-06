@@ -14,6 +14,7 @@ export declare class UsersService {
     createVerificationCode(phone: string): Promise<void>;
     sendVerificationCode(chat_id: number, code: string): Promise<void>;
     verifyCode(phone: string, code: string): Promise<boolean>;
+    deleteVerificationCode(phone: string, code: string): Promise<void>;
     createUserAfterVerification(createUserDto: Prisma.UserCreateInput): Promise<CreateUserResDto>;
     findOneByEmail(email: string): Promise<User | null>;
 }

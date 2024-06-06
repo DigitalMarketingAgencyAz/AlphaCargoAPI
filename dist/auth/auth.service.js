@@ -84,8 +84,17 @@ let AuthService = class AuthService {
         if (!isValid) {
             throw new common_1.BadRequestException('Неверный код верификации');
         }
-        const user = await this.usersService.createUserAfterVerification(payload);
-        return user;
+        try {
+            const user = await this.usersService.createUserAfterVerification(payload);
+            await this.usersService.deleteVerificationCode(payload.phone, payload.code);
+            return user;
+        }
+        catch (error) {
+            if (error instanceof common_1.ConflictException) {
+                throw new common_1.ConflictException(error.message);
+            }
+            throw new common_1.BadRequestException('Ошибка при создании пользователя');
+        }
     }
     async signUpStep1(phone) {
         const tgUser = await this.usersService.findOneByPhoneTG(phone);
@@ -99,8 +108,17 @@ let AuthService = class AuthService {
         if (!isValid) {
             throw new common_1.BadRequestException('Неверный код верификации');
         }
-        const user = await this.usersService.createUserAfterVerification(payload);
-        return user;
+        try {
+            const user = await this.usersService.createUserAfterVerification(payload);
+            await this.usersService.deleteVerificationCode(payload.phone, payload.code);
+            return user;
+        }
+        catch (error) {
+            if (error instanceof common_1.ConflictException) {
+                throw new common_1.ConflictException(error.message);
+            }
+            throw new common_1.BadRequestException('Ошибка при создании пользователя');
+        }
     }
 };
 exports.AuthService = AuthService;
