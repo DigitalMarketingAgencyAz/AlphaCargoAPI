@@ -22,22 +22,23 @@ import { ContractsModule } from './contracts/contracts.module';
 import { AppLoggerMiddleware } from './middlewares/logger.middleware';
 import { PrismaModule } from './prisma/prisma.module';
 // import { TgbotModule } from './tgbot/tgbot.module';
+import { TariffsModule } from './tariffs/tariffs.module';
 
 const randomFilename = () => {
   return uuidv4();
 };
 
-// const DEFAULT_ADMIN = {
-//   email: 'admin@example.com',
-//   password: 'alphacargopassword123!',
-// };
+const DEFAULT_ADMIN = {
+  email: 'admin@example.com',
+  password: 'alphacargopassword123!',
+};
 
-// const authenticate = async (email: string, password: string) => {
-//   if (email === DEFAULT_ADMIN.email && password === DEFAULT_ADMIN.password) {
-//     return Promise.resolve(DEFAULT_ADMIN);
-//   }
-//   return null;
-// };
+const authenticate = async (email: string, password: string) => {
+  if (email === DEFAULT_ADMIN.email && password === DEFAULT_ADMIN.password) {
+    return Promise.resolve(DEFAULT_ADMIN);
+  }
+  return null;
+};
 @Module({
   imports: [
     import('@adminjs/nestjs').then(({ AdminModule }) =>
@@ -156,6 +157,7 @@ const randomFilename = () => {
                       Bag: 'Тип посылки',
                       ParcelType: 'Тип товара',
                       Calculator: 'Данные о калькуляторе',
+                      Tariff: 'Тарифы',
                       Request: 'Заявки',
                       Service: 'Услуги',
                       Notification: 'Уведомления',
@@ -177,6 +179,8 @@ const randomFilename = () => {
                       updatedAt: 'Обновлено',
                       cityname: 'Название города',
                       country: 'Страна',
+                      deliveryTime: 'Срок доставки',
+                      type: 'Тип',
                       address: 'Адрес',
                       city: 'Город',
                       openingHour: 'Час открытия',
@@ -408,6 +412,12 @@ const randomFilename = () => {
                 },
                 {
                   resource: {
+                    model: getModelByName('Tariff'),
+                    client: prisma,
+                  },
+                },
+                {
+                  resource: {
                     model: getModelByName('Request'),
                     client: prisma,
                   },
@@ -479,11 +489,11 @@ const randomFilename = () => {
                 },
               ],
             },
-            // auth: {
-            //   authenticate,
-            //   cookieName: 'adminjs',
-            //   cookiePassword: 'secret',
-            // },
+            auth: {
+              authenticate,
+              cookieName: 'adminjs',
+              cookiePassword: 'secret',
+            },
             sessionOptions: {
               resave: true,
               saveUninitialized: true,
@@ -512,6 +522,7 @@ const randomFilename = () => {
     ResumeModule,
     ContractsModule,
     PrismaModule,
+    TariffsModule,
     // TgbotModule.registerAsync({
     //   useFactory: async () => ({
     //     botToken: '7437824568:AAFMKnX_DolPIRbJCmPoqtBSAkwFL10NsXM',

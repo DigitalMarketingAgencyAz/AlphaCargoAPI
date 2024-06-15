@@ -38,7 +38,7 @@ let ParcelsService = class ParcelsService {
         const { DateEnd, DateStart } = this.getCurrentDate();
         const options = {
             method: 'POST',
-            url: 'http://212.2.231.34/test/hs/shipment_history',
+            url: 'http://212.2.231.34/alpha_cargo/hs/shipment_history',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: constants_1.authorization,
@@ -61,7 +61,7 @@ let ParcelsService = class ParcelsService {
     async findOneByInvoiceNumber(InvoiceNumber) {
         const options = {
             method: 'POST',
-            url: 'http://212.2.231.34/test/hs/shipment_status',
+            url: 'http://212.2.231.34/alpha_cargo/hs/shipment_status',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: constants_1.authorization,
@@ -82,7 +82,7 @@ let ParcelsService = class ParcelsService {
     async getInvoicePdf(invoiceNumber) {
         const options = {
             method: 'POST',
-            url: 'http://212.2.231.34/test/hs/get_pdf',
+            url: 'http://212.2.231.34/alpha_cargo/hs/get_pdf',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: constants_1.authorization,

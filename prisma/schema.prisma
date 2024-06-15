@@ -61,6 +61,7 @@ model Country {
   countryname String   @unique
   cities      City[]
   offices     Office[]
+  Tariff      Tariff[]
 }
 
 enum City_Type {
@@ -78,6 +79,7 @@ model City {
   offices         Office[]
   calculatorsFrom Calculator[] @relation("CalculatorFrom")
   calculatorsTo   Calculator[] @relation("CalculatorTo")
+  Tariff          Tariff[]
 }
 
 model Calculator {
@@ -101,6 +103,7 @@ model ParcelType {
   id         Int          @id @default(autoincrement())
   name       String       @unique
   Calculator Calculator[]
+  Tariff     Tariff[]
 }
 
 model Resume {
@@ -173,6 +176,19 @@ model VerificationCode {
   code      String
   expiresAt DateTime
   createdAt DateTime @default(now())
+}
+
+model Tariff {
+  id           Int    @id @default(autoincrement())
+  countryId    Int
+  typeId       Int
+  cityToId     Int
+  price        Int
+  deliveryTime String
+
+  country Country    @relation(fields: [countryId], references: [id])
+  cityTo  City       @relation(fields: [cityToId], references: [id])
+  type    ParcelType @relation(fields: [typeId], references: [id])
 }
 
 // model Parcel {

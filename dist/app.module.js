@@ -30,8 +30,19 @@ const resume_module_1 = require("./resume/resume.module");
 const contracts_module_1 = require("./contracts/contracts.module");
 const logger_middleware_1 = require("./middlewares/logger.middleware");
 const prisma_module_1 = require("./prisma/prisma.module");
+const tariffs_module_1 = require("./tariffs/tariffs.module");
 const randomFilename = () => {
     return (0, uuid_1.v4)();
+};
+const DEFAULT_ADMIN = {
+    email: 'admin@example.com',
+    password: 'alphacargopassword123!',
+};
+const authenticate = async (email, password) => {
+    if (email === DEFAULT_ADMIN.email && password === DEFAULT_ADMIN.password) {
+        return Promise.resolve(DEFAULT_ADMIN);
+    }
+    return null;
 };
 let AppModule = class AppModule {
     configure(consumer) {
@@ -151,6 +162,7 @@ exports.AppModule = AppModule = __decorate([
                                             Bag: 'Тип посылки',
                                             ParcelType: 'Тип товара',
                                             Calculator: 'Данные о калькуляторе',
+                                            Tariff: 'Тарифы',
                                             Request: 'Заявки',
                                             Service: 'Услуги',
                                             Notification: 'Уведомления',
@@ -172,6 +184,8 @@ exports.AppModule = AppModule = __decorate([
                                             updatedAt: 'Обновлено',
                                             cityname: 'Название города',
                                             country: 'Страна',
+                                            deliveryTime: 'Срок доставки',
+                                            type: 'Тип',
                                             address: 'Адрес',
                                             city: 'Город',
                                             openingHour: 'Час открытия',
@@ -372,6 +386,12 @@ exports.AppModule = AppModule = __decorate([
                                 },
                                 {
                                     resource: {
+                                        model: getModelByName('Tariff'),
+                                        client: prisma,
+                                    },
+                                },
+                                {
+                                    resource: {
                                         model: getModelByName('Request'),
                                         client: prisma,
                                     },
@@ -443,6 +463,11 @@ exports.AppModule = AppModule = __decorate([
                                 },
                             ],
                         },
+                        auth: {
+                            authenticate,
+                            cookieName: 'adminjs',
+                            cookiePassword: 'secret',
+                        },
                         sessionOptions: {
                             resave: true,
                             saveUninitialized: true,
@@ -470,6 +495,7 @@ exports.AppModule = AppModule = __decorate([
             resume_module_1.ResumeModule,
             contracts_module_1.ContractsModule,
             prisma_module_1.PrismaModule,
+            tariffs_module_1.TariffsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
