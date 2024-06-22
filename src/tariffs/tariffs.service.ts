@@ -7,6 +7,12 @@ export class TariffService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(): Promise<Tariff[]> {
-    return this.prisma.tariff.findMany();
+    return this.prisma.tariff.findMany({
+      include: {
+        country: true,
+        type: true,
+        cityTo: true,
+      },
+    });
   }
 }
