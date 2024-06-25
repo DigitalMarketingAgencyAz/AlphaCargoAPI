@@ -211,7 +211,7 @@ export class UsersService {
       },
     });
     await this.prisma.tGUsers.updateMany({
-      where: { phone: { contains: findPhone } },
+      where: { phone: { contains: findPhone.replace(/[^0-9]/g, '') } },
       data: { userId: createdUser.id },
     });
 
