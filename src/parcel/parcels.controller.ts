@@ -16,14 +16,15 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { GetParcelStatusDto } from './dto/base-parcel-status.dto';
+import { Public } from 'src/auth/public-strategy';
 
 @ApiTags('parcels')
 @Controller('parcels')
-@ApiBearerAuth()
 @UseGuards(AuthGuard)
 export class ParcelsController {
   constructor(private parcelsService: ParcelsService) {}
 
+  @ApiBearerAuth()
   @Get()
   @ApiOperation({ summary: 'Получить все посылки пользователя' })
   @ApiResponse({
@@ -36,6 +37,7 @@ export class ParcelsController {
     return await this.parcelsService.findAll(phoneNumber);
   }
 
+  @Public()
   @Get('/invoice/:invoiceNumber')
   @ApiOperation({ summary: 'Получить историю посылки по invoiceNumber' })
   @ApiResponse({
@@ -49,6 +51,7 @@ export class ParcelsController {
     return this.parcelsService.findOneByInvoiceNumber(invoiceNumber);
   }
 
+  @ApiBearerAuth()
   @Get('/invoice/:invoiceNumber/pdf')
   @ApiOperation({ summary: 'Получить PDF файл по invoiceNumber' })
   @ApiResponse({
