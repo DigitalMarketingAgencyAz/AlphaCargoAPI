@@ -41,9 +41,9 @@ export class TgbotService {
 
       try {
         await this.prisma.tGUsers.upsert({
-          where: { chat_id: ctx.from.id },
+          where: { chat_id: `${ctx.from.id}` },
           update: { phone },
-          create: { chat_id: ctx.from.id, phone },
+          create: { chat_id: `${ctx.from.id}`, phone },
         });
 
         await ctx.reply('Номер телефона успешно сохранен');
@@ -58,7 +58,7 @@ export class TgbotService {
     this.bot.command('myphone', async (ctx: Context) => {
       try {
         const tgUser = await this.prisma.tGUsers.findUnique({
-          where: { chat_id: ctx.from.id },
+          where: { chat_id: `${ctx.from.id}` },
         });
 
         if (tgUser) {
@@ -79,7 +79,7 @@ export class TgbotService {
     this.bot.launch();
   }
 
-  async sendVerificationCode(chat_id: number, code: string): Promise<void> {
+  async sendVerificationCode(chat_id: string, code: string): Promise<void> {
     try {
       await this.bot.telegram.sendMessage(
         chat_id,

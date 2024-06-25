@@ -139,7 +139,7 @@ export class UsersService {
     }
   }
 
-  async sendVerificationCode(chat_id: number, code: string): Promise<void> {
+  async sendVerificationCode(chat_id: string, code: string): Promise<void> {
     // Логика отправки кода через Telegram-бота
     console.log(`Send verification code ${code} to chat_id ${chat_id}`);
     this.tgbot.sendVerificationCode(chat_id, code);

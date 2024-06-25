@@ -12,7 +12,7 @@ export declare class UsersService {
     update(id: number, updateUserDto: UpdateUserReqDto): Promise<UpdateUserResDto>;
     findOneByPhoneTG(phone: string): Promise<TGUsers | null>;
     createVerificationCode(phone: string): Promise<void>;
-    sendVerificationCode(chat_id: number, code: string): Promise<void>;
+    sendVerificationCode(chat_id: string, code: string): Promise<void>;
     verifyCode(phone: string, code: string): Promise<boolean>;
     deleteVerificationCode(phone: string, code: string): Promise<void>;
     createUserAfterVerification(createUserDto: Prisma.UserCreateInput): Promise<CreateUserResDto>;
