@@ -164,7 +164,7 @@ model Request {
 
 model TGUsers {
   id      Int    @id @default(autoincrement())
-  chat_id Int    @unique
+  chat_id String @unique
   phone   String @unique
   user    User?  @relation(fields: [userId], references: [id])
   userId  Int?   @unique
