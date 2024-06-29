@@ -23,6 +23,7 @@ import { AppLoggerMiddleware } from './middlewares/logger.middleware';
 import { PrismaModule } from './prisma/prisma.module';
 // import { TgbotModule } from './tgbot/tgbot.module';
 import { TariffsModule } from './tariffs/tariffs.module';
+import { PaymentModule } from './payment/payment.module';
 
 const randomFilename = () => {
   return uuidv4();
@@ -162,6 +163,7 @@ const authenticate = async (email: string, password: string) => {
                       Service: 'Услуги',
                       Notification: 'Уведомления',
                       Resume: 'Резюме',
+                      Payment: 'Платежи',
                       Contract: 'Договора',
                       navigation: 'Навигация',
                       pages: 'Страницы',
@@ -215,6 +217,10 @@ const authenticate = async (email: string, password: string) => {
                       desiredSalary: 'Желаемая ЗП',
                       resumeFile: 'Файл резюме',
                       file: 'Файл',
+                      amount: 'Сумма',
+                      userId: 'ID пользователя',
+                      user: 'Пользователь',
+                      checkFile: 'Файл платежа',
                     },
                     messages: {
                       successfullyBulkDeleted:
@@ -433,6 +439,16 @@ const authenticate = async (email: string, password: string) => {
                     model: getModelByName('Resume'),
                     client: prisma,
                   },
+                  options: {
+                    actions: {
+                      edit: {
+                        isVisible: false,
+                      },
+                      new: {
+                        isVisible: false,
+                      },
+                    },
+                  },
                   features: [
                     uploadFeature({
                       componentLoader,
@@ -457,6 +473,45 @@ const authenticate = async (email: string, password: string) => {
                         const extension = filename.split('.').pop();
                         const randomName = randomFilename();
                         return `resumes/${record.id()}/${randomName}.${extension}`;
+                      },
+                    }),
+                  ],
+                },
+                {
+                  resource: {
+                    model: getModelByName('Payment'),
+                    client: prisma,
+                  },
+                  options: {
+                    actions: {
+                      edit: {
+                        isVisible: false,
+                      },
+                      new: {
+                        isVisible: false,
+                      },
+                    },
+                  },
+                  features: [
+                    uploadFeature({
+                      componentLoader,
+                      provider: {
+                        local: {
+                          bucket: '/',
+                          opts: { baseUrl: '/.' },
+                        },
+                      },
+                      properties: {
+                        key: 'checkFile',
+                        mimeType: 'mimeType',
+                      },
+                      validation: {
+                        mimeTypes: ['image/jpeg', 'image/png'],
+                      },
+                      uploadPath: (record, filename) => {
+                        const extension = filename.split('.').pop();
+                        const randomName = randomFilename();
+                        return `payment/${record.id()}/${randomName}.${extension}`;
                       },
                     }),
                   ],
@@ -523,6 +578,7 @@ const authenticate = async (email: string, password: string) => {
     ContractsModule,
     PrismaModule,
     TariffsModule,
+    PaymentModule,
     // TgbotModule.registerAsync({
     //   useFactory: async () => ({
     //     botToken: '7437824568:AAFMKnX_DolPIRbJCmPoqtBSAkwFL10NsXM',

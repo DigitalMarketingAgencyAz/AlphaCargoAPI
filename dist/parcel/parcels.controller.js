@@ -18,6 +18,7 @@ const parcels_service_1 = require("./parcels.service");
 const base_parcel_dto_1 = require("./dto/base-parcel-dto");
 const swagger_1 = require("@nestjs/swagger");
 const auth_guard_1 = require("../auth/auth.guard");
+const public_strategy_1 = require("../auth/public-strategy");
 let ParcelsController = class ParcelsController {
     parcelsService;
     constructor(parcelsService) {
@@ -40,6 +41,7 @@ let ParcelsController = class ParcelsController {
 };
 exports.ParcelsController = ParcelsController;
 __decorate([
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({ summary: 'Получить все посылки пользователя' }),
     (0, swagger_1.ApiResponse)({
@@ -53,6 +55,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ParcelsController.prototype, "findAll", null);
 __decorate([
+    (0, public_strategy_1.Public)(),
     (0, common_1.Get)('/invoice/:invoiceNumber'),
     (0, swagger_1.ApiOperation)({ summary: 'Получить историю посылки по invoiceNumber' }),
     (0, swagger_1.ApiResponse)({
@@ -66,6 +69,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ParcelsController.prototype, "findOne", null);
 __decorate([
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Get)('/invoice/:invoiceNumber/pdf'),
     (0, swagger_1.ApiOperation)({ summary: 'Получить PDF файл по invoiceNumber' }),
     (0, swagger_1.ApiResponse)({
@@ -81,7 +85,6 @@ __decorate([
 exports.ParcelsController = ParcelsController = __decorate([
     (0, swagger_1.ApiTags)('parcels'),
     (0, common_1.Controller)('parcels'),
-    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __metadata("design:paramtypes", [parcels_service_1.ParcelsService])
 ], ParcelsController);

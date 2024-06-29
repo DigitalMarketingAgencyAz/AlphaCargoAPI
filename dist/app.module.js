@@ -31,6 +31,7 @@ const contracts_module_1 = require("./contracts/contracts.module");
 const logger_middleware_1 = require("./middlewares/logger.middleware");
 const prisma_module_1 = require("./prisma/prisma.module");
 const tariffs_module_1 = require("./tariffs/tariffs.module");
+const payment_module_1 = require("./payment/payment.module");
 const randomFilename = () => {
     return (0, uuid_1.v4)();
 };
@@ -167,6 +168,7 @@ exports.AppModule = AppModule = __decorate([
                                             Service: 'Услуги',
                                             Notification: 'Уведомления',
                                             Resume: 'Резюме',
+                                            Payment: 'Платежи',
                                             Contract: 'Договора',
                                             navigation: 'Навигация',
                                             pages: 'Страницы',
@@ -220,6 +222,10 @@ exports.AppModule = AppModule = __decorate([
                                             desiredSalary: 'Желаемая ЗП',
                                             resumeFile: 'Файл резюме',
                                             file: 'Файл',
+                                            amount: 'Сумма',
+                                            userId: 'ID пользователя',
+                                            user: 'Пользователь',
+                                            checkFile: 'Файл платежа',
                                         },
                                         messages: {
                                             successfullyBulkDeleted: 'Успешно удалено {{count}} запись',
@@ -407,6 +413,16 @@ exports.AppModule = AppModule = __decorate([
                                         model: getModelByName('Resume'),
                                         client: prisma,
                                     },
+                                    options: {
+                                        actions: {
+                                            edit: {
+                                                isVisible: false,
+                                            },
+                                            new: {
+                                                isVisible: false,
+                                            },
+                                        },
+                                    },
                                     features: [
                                         uploadFeature({
                                             componentLoader,
@@ -431,6 +447,45 @@ exports.AppModule = AppModule = __decorate([
                                                 const extension = filename.split('.').pop();
                                                 const randomName = randomFilename();
                                                 return `resumes/${record.id()}/${randomName}.${extension}`;
+                                            },
+                                        }),
+                                    ],
+                                },
+                                {
+                                    resource: {
+                                        model: getModelByName('Payment'),
+                                        client: prisma,
+                                    },
+                                    options: {
+                                        actions: {
+                                            edit: {
+                                                isVisible: false,
+                                            },
+                                            new: {
+                                                isVisible: false,
+                                            },
+                                        },
+                                    },
+                                    features: [
+                                        uploadFeature({
+                                            componentLoader,
+                                            provider: {
+                                                local: {
+                                                    bucket: '/',
+                                                    opts: { baseUrl: '/.' },
+                                                },
+                                            },
+                                            properties: {
+                                                key: 'checkFile',
+                                                mimeType: 'mimeType',
+                                            },
+                                            validation: {
+                                                mimeTypes: ['image/jpeg', 'image/png'],
+                                            },
+                                            uploadPath: (record, filename) => {
+                                                const extension = filename.split('.').pop();
+                                                const randomName = randomFilename();
+                                                return `payment/${record.id()}/${randomName}.${extension}`;
                                             },
                                         }),
                                     ],
@@ -496,6 +551,7 @@ exports.AppModule = AppModule = __decorate([
             contracts_module_1.ContractsModule,
             prisma_module_1.PrismaModule,
             tariffs_module_1.TariffsModule,
+            payment_module_1.PaymentModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

@@ -26,6 +26,7 @@ model User {
   // parcels   Parcel[] // Одно-ко-многим отношение между User и Parcel
   NotificationRead NotificationRead[]
   TGUsers          TGUsers?
+  Payment          Payment[]
 }
 
 model Contract {
@@ -115,6 +116,16 @@ model Resume {
   resumeFile      String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+model Payment {
+  id        Int      @id @default(autoincrement())
+  amount    Float
+  checkFile String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Service {
