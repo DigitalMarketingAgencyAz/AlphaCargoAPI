@@ -91,6 +91,20 @@ export class UsersService {
     });
   }
 
+  async deleteUserById(id: number): Promise<void> {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+
+    await this.prisma.user.delete({
+      where: { id },
+    });
+  }
+
   async createVerificationCode(phone: string): Promise<void> {
     const existingCode = await this.prisma.verificationCode.findFirst({
       where: {

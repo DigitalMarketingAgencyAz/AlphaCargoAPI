@@ -67,6 +67,20 @@ export class UserController {
     return updatedUser;
   }
 
+  @Delete()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Delete user' })
+  @ApiResponse({
+    status: 204,
+    description: 'User successfully deleted',
+  })
+  async deleteUser(@Req() request): Promise<void> {
+    const userId = request.user.id;
+    await this.usersService.deleteUserById(userId);
+  }
+}
+
+
   // @Get('userparcel')
   // @ApiResponse({
   //   status: 200,
