@@ -144,40 +144,4 @@ export class AuthController {
   ): Promise<CreateUserResDto> {
     return this.authService.signUp(signUpDto);
   }
-
-  // @Public()
-  // @HttpCode(HttpStatus.OK)
-  // @Post('request-verification')
-  // @ApiOperation({ summary: 'Request Verification Code' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Verification code sent',
-  // })
-  // @ApiBody({
-  //   schema: { type: 'object', properties: { phone: { type: 'string' } } },
-  // })
-  // async requestVerification(@Body('phone') phone: string): Promise<void> {
-  //   return this.usersService.createVerificationCode(phone);
-  // }
-
-  // @Public()
-  // @HttpCode(HttpStatus.OK)
-  // @Post('verify-code')
-  // @ApiOperation({ summary: 'Verify Code' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Code verified',
-  // })
-  // @ApiBody({
-  //   schema: {
-  //     type: 'object',
-  //     properties: { phone: { type: 'string' }, code: { type: 'string' } },
-  //   },
-  // })
-  // async verifyCode(
-  //   @Body('phone') phone: string,
-  //   @Body('code') code: string,
-  // ): Promise<boolean> {
-  //   return this.usersService.verifyCode(phone, code);
-  // }
 }

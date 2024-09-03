@@ -11,8 +11,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // url      = "postgresql://user:password@localhost:55432/alphacargo?connection_limit=5"
-  url      = "postgresql://doadmin:AVNS_AQChFj4yUTXSX2PSHFx@db-postgresql-ams3-19323-do-user-15530903-0.c.db.ondigitalocean.com:25060/alphacargo?sslmode=require&connection_limit=5"
+  url      = "postgresql://user:password@localhost:55432/alphacargo?connection_limit=5"
+  // url      = "postgresql://doadmin:AVNS_AQChFj4yUTXSX2PSHFx@db-postgresql-ams3-19323-do-user-15530903-0.c.db.ondigitalocean.com:25060/alphacargo?sslmode=require&connection_limit=5"
 }
 
 model User {
@@ -24,6 +24,7 @@ model User {
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   // parcels   Parcel[] // Одно-ко-многим отношение между User и Parcel
+  isActive         Boolean            @default(true) // Поле для деактивации пользователя
   NotificationRead NotificationRead[]
   TGUsers          TGUsers?
   Payment          Payment[]

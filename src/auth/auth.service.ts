@@ -19,6 +19,16 @@ export class AuthService {
 
   async signIn(phone: string, pass: string): Promise<LoginResDto> {
     const user = await this.usersService.findOneByPhone(phone);
+
+    if (!user) {
+      throw new UnauthorizedException('Неправильные учетные данные');
+    }
+
+    // Проверка, активен ли аккаунт
+    if (!user.isActive) {
+      throw new UnauthorizedException('Ваш аккаунт не активен');
+    }
+
     if (user) {
       const isPasswordMatch = await bcrypt.compare(pass, user.password);
       if (isPasswordMatch) {
@@ -43,6 +53,11 @@ export class AuthService {
       throw new UnauthorizedException('Пользователь с таким номером не найден');
     }
 
+    // Проверка, активен ли аккаунт
+    if (!user.isActive) {
+      throw new UnauthorizedException('Ваш аккаунт не активен');
+    }
+
     const payload = { id: user.id, email: user.email, phone: user.phone };
     return {
       accessToken: await this.jwtService.signAsync(payload, {
@@ -62,6 +77,11 @@ export class AuthService {
     );
     if (!isValid) {
       throw new BadRequestException('Неверный код верификации');
+    }
+
+    const existingUser = await this.usersService.findOneByPhone(payload.phone);
+    if (existingUser && !existingUser.isActive) {
+      throw new UnauthorizedException('Ваш аккаунт не активен');
     }
 
     try {
@@ -95,6 +115,11 @@ export class AuthService {
     );
     if (!isValid) {
       throw new BadRequestException('Неверный код верификации');
+    }
+
+    const existingUser = await this.usersService.findOneByPhone(payload.phone);
+    if (existingUser && !existingUser.isActive) {
+      throw new UnauthorizedException('Ваш аккаунт не активен');
     }
 
     try {

@@ -8,6 +8,7 @@ import {
   Get,
   UseGuards,
   Req,
+  Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -65,6 +66,18 @@ export class UserController {
       updateUserReqDto,
     );
     return updatedUser;
+  }
+
+  @Delete('deactivateUser')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Deactivate user account' })
+  @ApiResponse({
+    status: 200,
+    description: 'User account deactivated',
+  })
+  async deactivateUser(@Req() request): Promise<void> {
+    const userId = request.user.id;
+    await this.usersService.deactivateUser(userId);
   }
 
   // @Get('userparcel')

@@ -27,7 +27,9 @@ export class UsersService {
     });
   }
 
-  async findOneById(id: number): Promise<Omit<User, 'password'> | null> {
+  async findOneById(
+    id: number,
+  ): Promise<Omit<User, 'password' | 'isActive'> | null> {
     const user = await this.prisma.user.findUnique({
       where: {
         id,
@@ -223,6 +225,19 @@ export class UsersService {
       where: {
         email,
       },
+    });
+  }
+
+  async deactivateUser(userId: number): Promise<void> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { isActive: false },
     });
   }
 }
