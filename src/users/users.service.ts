@@ -5,48 +5,87 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, TGUsers, User } from '@prisma/client';
-import { CreateUserResDto } from './dto/create-user.dto';
+import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { addMinutes, isBefore } from 'date-fns';
+import axios from 'axios';
 import { UpdateUserReqDto, UpdateUserResDto } from './dto/update-user.dto';
-import { TgbotService } from 'src/tgbot/tgbot.service';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private prisma: PrismaService,
-    private tgbot: TgbotService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
-  async findOneByPhone(phone: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: {
-        phone,
-      },
+  // Создание верификационного кода с проверкой частоты запросов
+  async createVerificationCode(phone: string): Promise<void> {
+    // Найти последний запрос для этого номера
+    const lastRequest = await this.findLastVerificationRequest(phone);
+
+    // Проверить, прошло ли 3 минуты с момента последнего запроса
+    if (
+      lastRequest &&
+      isBefore(new Date(), addMinutes(lastRequest.createdAt, 3))
+    ) {
+      throw new BadRequestException(
+        'Слишком частые запросы. Пожалуйста, подождите 3 минуты перед повторной отправкой кода.',
+      );
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString(); // Генерация 6-значного кода
+    const expiresAt = addMinutes(new Date(), 5); // Код действителен в течение 5 минут
+
+    await this.prisma.verificationCode.create({
+      data: { phone, code, expiresAt, createdAt: new Date() },
+    });
+
+    // Отправка кода через SMS
+    await this.sendSmsVerification(phone, code);
+  }
+
+  // Отправка СМС с верификационным кодом
+  async sendSmsVerification(phone: string, code: string): Promise<void> {
+    const login = 'TheErl';
+    const password = 'Erlan70ka1';
+    const transactionId = `U4B4m1za${Math.random().toString(36).substr(2, 12)}`;
+    const sender = 'SMSPRO.KG';
+    const text = `Ваш код для регистрации: ${code}`;
+
+    const xmlData = `<?xml version="1.0" encoding="UTF-8"?>
+    <message>
+      <login>${login}</login>
+      <pwd>${password}</pwd>
+      <id>${transactionId}</id>
+      <sender>${sender}</sender>
+      <text>${text}</text>
+      <phones>
+        <phone>${phone}</phone>
+      </phones>
+    </message>`;
+
+    const url = 'https://smspro.nikita.kg/api/message';
+    const headers = { 'Content-Type': 'application/xml' };
+
+    try {
+      const response = await axios.post(url, xmlData, { headers });
+      if (response.status !== 200) {
+        throw new BadRequestException('Ошибка при отправке СМС');
+      }
+    } catch (error) {
+      throw new BadRequestException('Произошла ошибка при отправке СМС');
+    }
+  }
+
+  // Найти последний запрос на отправку верификационного кода
+  async findLastVerificationRequest(phone: string): Promise<any> {
+    return this.prisma.verificationCode.findFirst({
+      where: { phone },
+      orderBy: { createdAt: 'desc' },
     });
   }
 
-  async findOneById(
-    id: number,
-  ): Promise<Omit<User, 'password' | 'isActive'> | null> {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        id,
-      },
-      select: {
-        id: true,
-        email: true,
-        phone: true,
-        fio: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+  async findOneByPhone(phone: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { phone },
     });
-    if (!user) {
-      throw new NotFoundException('Пользователь не найден');
-    }
-    return user;
   }
 
   async update(
@@ -61,22 +100,24 @@ export class UsersService {
       throw new NotFoundException('Пользователь не найден');
     }
 
+    const data: any = { ...updateUserDto };
+
     if (updateUserDto.password) {
       const saltOrRounds = 10;
       const hashedPassword = await bcrypt.hash(
         updateUserDto.password,
         saltOrRounds,
       );
-      updateUserDto.password = hashedPassword;
+      data.password = hashedPassword;
     }
 
     const updatedUser = await this.prisma.user.update({
       where: { id },
-      data: { ...updateUserDto },
+      data,
       select: {
         id: true,
-        email: true,
         phone: true,
+        email: true,
         fio: true,
       },
     });
@@ -84,81 +125,24 @@ export class UsersService {
     return updatedUser;
   }
 
-  async findOneByPhoneTG(phone: string): Promise<TGUsers | null> {
-    const findPhone = phone.replace(/\D/g, '');
-    return this.prisma.tGUsers.findFirst({
-      where: {
-        phone: { contains: findPhone },
-      },
-    });
-  }
-
-  async deleteUserById(id: number): Promise<void> {
+  async findOneById(id: number): Promise<Omit<User, 'password' | 'isActive'>> {
     const user = await this.prisma.user.findUnique({
       where: { id },
+      select: {
+        id: true,
+        phone: true,
+        email: true,
+        fio: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
     if (!user) {
       throw new NotFoundException('Пользователь не найден');
     }
 
-    await this.prisma.user.delete({
-      where: { id },
-    });
-  }
-
-  async createVerificationCode(phone: string): Promise<void> {
-    const existingCode = await this.prisma.verificationCode.findFirst({
-      where: {
-        phone,
-        expiresAt: { gt: new Date() },
-      },
-    });
-
-    if (existingCode) {
-      throw new BadRequestException(
-        'Код уже отправлен. Пожалуйста, подождите перед запросом нового кода.',
-      );
-    }
-
-    const lastRequest = await this.prisma.verificationCode.findFirst({
-      where: { phone },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    if (
-      lastRequest &&
-      isBefore(new Date(), addMinutes(lastRequest.createdAt, 1))
-    ) {
-      throw new BadRequestException(
-        'Слишком частые запросы. Пожалуйста, подождите немного перед повторным запросом.',
-      );
-    }
-
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = addMinutes(new Date(), 5);
-
-    await this.prisma.verificationCode.create({
-      data: { phone, code, expiresAt, createdAt: new Date() },
-    });
-
-    const findPhone = phone.replace(/\D/g, '');
-    const tgUser = await this.prisma.tGUsers.findFirst({
-      where: {
-        phone: { contains: findPhone },
-      },
-    });
-
-    console.log(tgUser, findPhone, 'line134');
-    if (tgUser) {
-      await this.sendVerificationCode(tgUser.chat_id, code);
-    }
-  }
-
-  async sendVerificationCode(chat_id: string, code: string): Promise<void> {
-    // Логика отправки кода через Telegram-бота
-    console.log(`Send verification code ${code} to chat_id ${chat_id}`);
-    this.tgbot.sendVerificationCode(chat_id, code);
+    return user;
   }
 
   async verifyCode(phone: string, code: string): Promise<boolean> {
@@ -170,27 +154,17 @@ export class UsersService {
       throw new BadRequestException('Неверный код верификации');
     }
 
-    if (isBefore(new Date(), verification.expiresAt)) {
-      return true;
-    } else {
+    if (new Date() > verification.expiresAt) {
       throw new BadRequestException('Код верификации истек');
     }
+
+    return true;
   }
 
-  async deleteVerificationCode(phone: string, code: string): Promise<void> {
-    await this.prisma.verificationCode.deleteMany({
-      where: { phone, code },
-    });
-  }
-
-  async createUserAfterVerification(
-    createUserDto: Prisma.UserCreateInput,
-  ): Promise<CreateUserResDto> {
-    const existingUserByEmail = await this.findOneByEmail(createUserDto.email);
-    if (existingUserByEmail) {
-      throw new ConflictException('Пользователь с таким email уже существует');
-    }
-
+  async createUserAfterVerification(createUserDto: {
+    phone: string;
+    password: string;
+  }): Promise<{ id: number; phone: string }> {
     const existingUserByPhone = await this.findOneByPhone(createUserDto.phone);
     if (existingUserByPhone) {
       throw new ConflictException(
@@ -198,47 +172,29 @@ export class UsersService {
       );
     }
 
-    const findPhone = createUserDto.phone.replace(/\D/g, '');
-
-    const tgUser = await this.prisma.tGUsers.findFirst({
-      where: { phone: { contains: findPhone } },
-    });
-    console.log('line187', tgUser, findPhone);
-    if (!tgUser) {
-      throw new BadRequestException('Сначала активируйте Telegram бота');
-    }
-
     const saltOrRounds = 10;
     const hashedPassword = await bcrypt.hash(
       createUserDto.password,
       saltOrRounds,
     );
-    const createUserWithoutCode = createUserDto;
-    delete createUserWithoutCode['code'];
+
     const createdUser = await this.prisma.user.create({
       data: {
-        ...createUserWithoutCode,
+        phone: createUserDto.phone,
         password: hashedPassword,
       },
       select: {
         id: true,
-        email: true,
         phone: true,
       },
-    });
-    await this.prisma.tGUsers.updateMany({
-      where: { phone: { contains: findPhone.replace(/[^0-9]/g, '') } },
-      data: { userId: createdUser.id },
     });
 
     return createdUser;
   }
 
-  async findOneByEmail(email: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: {
-        email,
-      },
+  async deleteVerificationCode(phone: string, code: string): Promise<void> {
+    await this.prisma.verificationCode.deleteMany({
+      where: { phone, code },
     });
   }
 

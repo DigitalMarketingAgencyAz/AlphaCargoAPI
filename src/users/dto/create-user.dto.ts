@@ -1,7 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   MaxLength,
@@ -14,13 +14,7 @@ const passwordRegEx =
 
 export class CreateUserResDto {
   @ApiProperty({ example: 1, description: 'Идентификатор пользователя' })
-  id?: number;
-
-  @ApiProperty({
-    example: 'user@example.com',
-    description: 'Email пользователя',
-  })
-  email: string;
+  id: number;
 
   @ApiProperty({
     example: '+1234567890',
@@ -31,15 +25,7 @@ export class CreateUserResDto {
 
 export class CreateUserReqDto {
   @ApiProperty({
-    example: 'user@example.com',
-    description: 'Email пользователя',
-  })
-  @IsEmail({}, { message: 'Пожалуйста, введите корректный Email.' })
-  @IsNotEmpty()
-  email: string;
-
-  @ApiProperty({
-    example: '',
+    example: 'Password123!',
     description: 'Пароль пользователя',
   })
   @IsNotEmpty({ message: 'Пароль обязателен для заполнения.' })
@@ -52,14 +38,6 @@ export class CreateUserReqDto {
   password: string;
 
   @ApiProperty({
-    example: 'John Doe',
-    description: 'Полное имя пользователя',
-  })
-  @IsString()
-  @IsNotEmpty({ message: 'Полное имя обязательно для заполнения.' })
-  fio: string;
-
-  @ApiProperty({
     example: '+1234567890',
     description: 'Номер телефона пользователя',
   })
@@ -67,4 +45,28 @@ export class CreateUserReqDto {
   @IsValidPhoneNumber(['KG', 'KZ', 'RU'])
   @IsNotEmpty()
   phone: string;
+
+  @ApiPropertyOptional({
+    example: 'John Doe',
+    description: 'Полное имя пользователя',
+  })
+  @IsOptional()
+  @IsString()
+  fio?: string;
+
+  @ApiPropertyOptional({
+    example: 'user@example.com',
+    description: 'Email пользователя',
+  })
+  @IsOptional()
+  email?: string;
+
+  // Добавляем поле 'code' для второго шага регистрации
+  @ApiPropertyOptional({
+    example: '123456',
+    description: 'Код верификации',
+  })
+  @IsOptional()
+  @IsString()
+  code?: string;
 }

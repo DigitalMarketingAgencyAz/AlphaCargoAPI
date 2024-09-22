@@ -16,7 +16,6 @@ const is_valid_number_decorator_1 = require("../decorators/is-valid-number.decor
 const passwordRegEx = /^(?=.*[a-zа-яё])(?=.*[A-ZА-ЯЁ])(?=.*\d)(?=.*[@$!%*?&])[A-Za-zА-Яа-яЁё\d@$!%*?&]+$/;
 class CreateUserResDto {
     id;
-    email;
     phone;
 }
 exports.CreateUserResDto = CreateUserResDto;
@@ -26,37 +25,22 @@ __decorate([
 ], CreateUserResDto.prototype, "id", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
-        example: 'user@example.com',
-        description: 'Email пользователя',
-    }),
-    __metadata("design:type", String)
-], CreateUserResDto.prototype, "email", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
         example: '+1234567890',
         description: 'Номер телефона пользователя',
     }),
     __metadata("design:type", String)
 ], CreateUserResDto.prototype, "phone", void 0);
 class CreateUserReqDto {
-    email;
     password;
-    fio;
     phone;
+    fio;
+    email;
+    code;
 }
 exports.CreateUserReqDto = CreateUserReqDto;
 __decorate([
     (0, swagger_1.ApiProperty)({
-        example: 'user@example.com',
-        description: 'Email пользователя',
-    }),
-    (0, class_validator_1.IsEmail)({}, { message: 'Пожалуйста, введите корректный Email.' }),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], CreateUserReqDto.prototype, "email", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        example: '',
+        example: 'Password123!',
         description: 'Пароль пользователя',
     }),
     (0, class_validator_1.IsNotEmpty)({ message: 'Пароль обязателен для заполнения.' }),
@@ -69,15 +53,6 @@ __decorate([
 ], CreateUserReqDto.prototype, "password", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
-        example: 'John Doe',
-        description: 'Полное имя пользователя',
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)({ message: 'Полное имя обязательно для заполнения.' }),
-    __metadata("design:type", String)
-], CreateUserReqDto.prototype, "fio", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
         example: '+1234567890',
         description: 'Номер телефона пользователя',
     }),
@@ -86,4 +61,30 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateUserReqDto.prototype, "phone", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'John Doe',
+        description: 'Полное имя пользователя',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateUserReqDto.prototype, "fio", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'user@example.com',
+        description: 'Email пользователя',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateUserReqDto.prototype, "email", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        example: '123456',
+        description: 'Код верификации',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateUserReqDto.prototype, "code", void 0);
 //# sourceMappingURL=create-user.dto.js.map

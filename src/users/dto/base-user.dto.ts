@@ -1,25 +1,30 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { IsValidPhoneNumber } from '../decorators/is-valid-number.decorator';
 
 export class BaseUserReq {
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Email пользователя',
     example: 'user@example.com',
   })
-  email: string;
+  @IsOptional()
+  email?: string;
 
   @ApiProperty({
     description: 'Номер телефона пользователя',
     example: '+1234567890',
   })
+  @IsString()
+  @IsValidPhoneNumber(['KG', 'KZ', 'RU'])
+  @IsNotEmpty()
   phone: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Полное имя пользователя',
     example: 'John Doe',
   })
-  fio: string;
+  @IsOptional()
+  fio?: string;
 }
 
 export class BaseUserRes {
@@ -29,11 +34,11 @@ export class BaseUserRes {
   })
   id?: number;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Email пользователя',
     example: 'user@example.com',
   })
-  email: string;
+  email?: string;
 
   @ApiProperty({
     description: 'Номер телефона пользователя',
@@ -41,21 +46,21 @@ export class BaseUserRes {
   })
   phone: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Полное имя пользователя',
     example: 'John Doe',
   })
-  fio: string;
+  fio?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Дата и время создания пользователя',
   })
-  createdAt: Date;
+  createdAt?: Date;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Дата и время последнего обновления пользователя',
   })
-  updatedAt: Date;
+  updatedAt?: Date;
 }
 
 export class LoginResDto {
@@ -69,20 +74,20 @@ export class LoginResDto {
   })
   id: number;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'user fio',
   })
-  fio: string;
+  fio?: string;
 
   @ApiProperty({
     description: 'user phone',
   })
   phone: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'user email',
   })
-  email: string;
+  email?: string;
 }
 
 export class LoginDto {

@@ -5,18 +5,13 @@ import {
   HttpCode,
   HttpStatus,
   BadRequestException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { LoginResDto } from '../users/dto/base-user.dto';
+import { CreateUserResDto } from '../users/dto/create-user.dto';
 import { Public } from './public-strategy';
-import {
-  CreateUserReqDto,
-  CreateUserResDto,
-} from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
-import * as bcrypt from 'bcrypt';
+import { LoginResDto } from '../users/dto/base-user.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -26,52 +21,14 @@ export class AuthController {
     private usersService: UsersService,
   ) {}
 
+  // Вход в систему через телефон и пароль
   @Public()
   @HttpCode(HttpStatus.OK)
-  @Post('login-step1')
-  @ApiOperation({ summary: 'User Login Step 1: Request Verification Code' })
+  @Post('login')
+  @ApiOperation({ summary: 'User Login' })
   @ApiResponse({
     status: 200,
-    description: 'Verification code sent',
-  })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        phone: { type: 'string' },
-        password: { type: 'string' },
-      },
-    },
-  })
-  async loginStep1(
-    @Body() loginDto: { phone: string; password: string },
-  ): Promise<void> {
-    const user = await this.usersService.findOneByPhone(loginDto.phone);
-    if (!user) {
-      throw new BadRequestException('Пользователь с таким номером не найден');
-    }
-
-    // Verify password
-    const isPasswordMatch = await bcrypt.compare(
-      loginDto.password,
-      user.password,
-    );
-    if (!isPasswordMatch) {
-      throw new UnauthorizedException('Неправильные учетные данные');
-    }
-
-    await this.usersService.createVerificationCode(loginDto.phone);
-  }
-
-  @Public()
-  @HttpCode(HttpStatus.OK)
-  @Post('login-step2')
-  @ApiOperation({
-    summary: 'User Login Step 2: Verify Code and Sign In',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'User logged in',
+    description: 'User successfully logged in',
     type: LoginResDto,
   })
   @ApiBody({
@@ -79,25 +36,17 @@ export class AuthController {
       type: 'object',
       properties: {
         phone: { type: 'string' },
-        code: { type: 'string' },
         password: { type: 'string' },
       },
     },
   })
-  async loginStep2(
-    @Body() loginDto: { phone: string; code: string; password: string },
+  async login(
+    @Body() loginDto: { phone: string; password: string },
   ): Promise<LoginResDto> {
-    const isValid = await this.usersService.verifyCode(
-      loginDto.phone,
-      loginDto.code,
-    );
-    if (!isValid) {
-      throw new BadRequestException('Неверный код верификации');
-    }
-
     return this.authService.signIn(loginDto.phone, loginDto.password);
   }
 
+  // Шаг 1 регистрации: отправка кода на телефон
   @Public()
   @HttpCode(HttpStatus.CREATED)
   @Post('signup-step1')
@@ -106,16 +55,26 @@ export class AuthController {
     status: 201,
     description: 'Verification code sent',
   })
-  @ApiBody({ type: CreateUserReqDto })
-  async signUpStep1(@Body() signUpDto: CreateUserReqDto): Promise<void> {
-    const tgUser = await this.usersService.findOneByPhoneTG(signUpDto.phone);
-    if (!tgUser) {
-      throw new BadRequestException('Сначала активируйте Telegram бота');
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        phone: { type: 'string' },
+      },
+    },
+  })
+  async signUpStep1(@Body() signUpDto: { phone: string }): Promise<void> {
+    const user = await this.usersService.findOneByPhone(signUpDto.phone);
+    if (user) {
+      throw new BadRequestException(
+        'Пользователь с таким номером телефона уже существует',
+      );
     }
 
     await this.usersService.createVerificationCode(signUpDto.phone);
   }
 
+  // Шаг 2 регистрации: проверка кода и создание аккаунта
   @Public()
   @HttpCode(HttpStatus.CREATED)
   @Post('signup-step2')
@@ -131,16 +90,14 @@ export class AuthController {
     schema: {
       type: 'object',
       properties: {
-        email: { type: 'string' },
-        password: { type: 'string' },
-        fio: { type: 'string' },
         phone: { type: 'string' },
+        password: { type: 'string' },
         code: { type: 'string' },
       },
     },
   })
   async signUpStep2(
-    @Body() signUpDto: CreateUserReqDto & { code: string },
+    @Body() signUpDto: { phone: string; password: string; code: string },
   ): Promise<CreateUserResDto> {
     return this.authService.signUp(signUpDto);
   }

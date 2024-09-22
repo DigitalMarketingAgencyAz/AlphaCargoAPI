@@ -4,7 +4,6 @@ import {
   Patch,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Get,
   UseGuards,
   Req,
@@ -18,7 +17,7 @@ import {
   ApiBody,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { BaseUserReq, BaseUserRes } from './dto/base-user.dto';
+import { BaseUserRes } from './dto/base-user.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UpdateUserReqDto, UpdateUserResDto } from './dto/update-user.dto';
 
@@ -31,29 +30,35 @@ export class UserController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get user information' })
+  @ApiOperation({ summary: 'Получить информацию о пользователе' })
   @ApiResponse({
     status: 200,
-    description: 'User data retrieved',
+    description: 'Информация о пользователе получена',
     type: BaseUserRes,
   })
-  async getUser(@Req() request): Promise<BaseUserReq> {
+  async getUser(@Req() request): Promise<BaseUserRes> {
     const userId = request.user.id;
     const user = await this.usersService.findOneById(userId);
-    if (!user) {
-      throw new NotFoundException('Пользователь не найден');
-    }
 
-    return user;
+    const userRes: BaseUserRes = {
+      id: user.id,
+      phone: user.phone,
+      email: user.email || null,
+      fio: user.fio || null,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
+    return userRes;
   }
 
   @Patch()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Update user information' })
+  @ApiOperation({ summary: 'Обновить информацию о пользователе' })
   @ApiBody({ type: UpdateUserReqDto })
   @ApiResponse({
     status: 200,
-    description: 'User information updated',
+    description: 'Информация о пользователе обновлена',
     type: UpdateUserResDto,
   })
   async updateUser(
@@ -65,28 +70,19 @@ export class UserController {
       userId,
       updateUserReqDto,
     );
+
     return updatedUser;
   }
 
   @Delete('deactivateUser')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Deactivate user account' })
+  @ApiOperation({ summary: 'Деактивировать аккаунт пользователя' })
   @ApiResponse({
     status: 200,
-    description: 'User account deactivated',
+    description: 'Аккаунт пользователя деактивирован',
   })
   async deactivateUser(@Req() request): Promise<void> {
     const userId = request.user.id;
     await this.usersService.deactivateUser(userId);
   }
-
-  // @Get('userparcel')
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Возвращает список всех посылок пользователя.',
-  // })
-  // getUserParcels(@Req() request) {
-  //   const userId = request.user.id;
-  //   return this.usersService.getUserParcels(userId);
-  // }
 }

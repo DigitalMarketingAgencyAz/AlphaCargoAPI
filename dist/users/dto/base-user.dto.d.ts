@@ -1,22 +1,22 @@
 export declare class BaseUserReq {
-    email: string;
+    email?: string;
     phone: string;
-    fio: string;
+    fio?: string;
 }
 export declare class BaseUserRes {
     id?: number;
-    email: string;
+    email?: string;
     phone: string;
-    fio: string;
-    createdAt: Date;
-    updatedAt: Date;
+    fio?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 export declare class LoginResDto {
     accessToken: string;
     id: number;
-    fio: string;
+    fio?: string;
     phone: string;
-    email: string;
+    email?: string;
 }
 export declare class LoginDto {
     phone: string;

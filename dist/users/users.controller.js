@@ -27,25 +27,34 @@ let UserController = class UserController {
     async getUser(request) {
         const userId = request.user.id;
         const user = await this.usersService.findOneById(userId);
-        if (!user) {
-            throw new common_1.NotFoundException('Пользователь не найден');
-        }
-        return user;
+        const userRes = {
+            id: user.id,
+            phone: user.phone,
+            email: user.email || null,
+            fio: user.fio || null,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+        };
+        return userRes;
     }
     async updateUser(request, updateUserReqDto) {
         const userId = request.user.id;
         const updatedUser = await this.usersService.update(userId, updateUserReqDto);
         return updatedUser;
     }
+    async deactivateUser(request) {
+        const userId = request.user.id;
+        await this.usersService.deactivateUser(userId);
+    }
 };
 exports.UserController = UserController;
 __decorate([
     (0, common_1.Get)(),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    (0, swagger_1.ApiOperation)({ summary: 'Get user information' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Получить информацию о пользователе' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
-        description: 'User data retrieved',
+        description: 'Информация о пользователе получена',
         type: base_user_dto_1.BaseUserRes,
     }),
     __param(0, (0, common_1.Req)()),
@@ -56,11 +65,11 @@ __decorate([
 __decorate([
     (0, common_1.Patch)(),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    (0, swagger_1.ApiOperation)({ summary: 'Update user information' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Обновить информацию о пользователе' }),
     (0, swagger_1.ApiBody)({ type: update_user_dto_1.UpdateUserReqDto }),
     (0, swagger_1.ApiResponse)({
         status: 200,
-        description: 'User information updated',
+        description: 'Информация о пользователе обновлена',
         type: update_user_dto_1.UpdateUserResDto,
     }),
     __param(0, (0, common_1.Req)()),
@@ -69,6 +78,19 @@ __decorate([
     __metadata("design:paramtypes", [Object, update_user_dto_1.UpdateUserReqDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "updateUser", null);
+__decorate([
+    (0, common_1.Delete)('deactivateUser'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, swagger_1.ApiOperation)({ summary: 'Деактивировать аккаунт пользователя' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Аккаунт пользователя деактивирован',
+    }),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "deactivateUser", null);
 exports.UserController = UserController = __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     (0, common_1.Controller)('users'),

@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserReqDto } from '../users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { LoginResDto } from '../users/dto/base-user.dto';
 
@@ -17,6 +16,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  // Логин с проверкой телефона и пароля
   async signIn(phone: string, pass: string): Promise<LoginResDto> {
     const user = await this.usersService.findOneByPhone(phone);
 
@@ -29,48 +29,25 @@ export class AuthService {
       throw new UnauthorizedException('Ваш аккаунт не активен');
     }
 
-    if (user) {
-      const isPasswordMatch = await bcrypt.compare(pass, user.password);
-      if (isPasswordMatch) {
-        const payload = { id: user.id, email: user.email, phone: user.phone };
-        return {
-          accessToken: await this.jwtService.signAsync(payload, {
-            expiresIn: '3h',
-          }),
-          id: user.id,
-          phone: user.phone,
-          fio: user.fio,
-          email: user.email,
-        };
-      }
-    }
-    throw new UnauthorizedException('Неправильные учетные данные');
-  }
-
-  async signInByPhone(phone: string): Promise<LoginResDto> {
-    const user = await this.usersService.findOneByPhone(phone);
-    if (!user) {
-      throw new UnauthorizedException('Пользователь с таким номером не найден');
+    const isPasswordMatch = await bcrypt.compare(pass, user.password);
+    if (!isPasswordMatch) {
+      throw new UnauthorizedException('Неправильные учетные данные');
     }
 
-    // Проверка, активен ли аккаунт
-    if (!user.isActive) {
-      throw new UnauthorizedException('Ваш аккаунт не активен');
-    }
-
-    const payload = { id: user.id, email: user.email, phone: user.phone };
+    // Генерация JWT токена
+    const payload = { id: user.id, phone: user.phone };
     return {
       accessToken: await this.jwtService.signAsync(payload, {
-        expiresIn: '3h',
+        expiresIn: '30 days',
       }),
       id: user.id,
       phone: user.phone,
-      fio: user.fio,
-      email: user.email,
     };
   }
 
-  async signUp(payload: CreateUserReqDto & { code: string }) {
+  // Регистрация с проверкой СМС-кода
+  async signUp(payload: { phone: string; password: string; code: string }) {
+    // Проверка кода верификации
     const isValid = await this.usersService.verifyCode(
       payload.phone,
       payload.code,
@@ -79,51 +56,19 @@ export class AuthService {
       throw new BadRequestException('Неверный код верификации');
     }
 
+    // Проверка на существующего пользователя
     const existingUser = await this.usersService.findOneByPhone(payload.phone);
     if (existingUser && !existingUser.isActive) {
       throw new UnauthorizedException('Ваш аккаунт не активен');
     }
 
     try {
-      const user = await this.usersService.createUserAfterVerification(payload);
-      await this.usersService.deleteVerificationCode(
-        payload.phone,
-        payload.code,
-      );
-      return user;
-    } catch (error) {
-      if (error instanceof ConflictException) {
-        throw new ConflictException(error.message);
-      }
-      throw new BadRequestException('Ошибка при создании пользователя');
-    }
-  }
-
-  async signUpStep1(phone: string) {
-    const tgUser = await this.usersService.findOneByPhoneTG(phone);
-    if (!tgUser) {
-      throw new BadRequestException('Сначала активируйте Telegram бота');
-    }
-
-    await this.usersService.createVerificationCode(phone);
-  }
-
-  async signUpStep2(payload: CreateUserReqDto & { code: string }) {
-    const isValid = await this.usersService.verifyCode(
-      payload.phone,
-      payload.code,
-    );
-    if (!isValid) {
-      throw new BadRequestException('Неверный код верификации');
-    }
-
-    const existingUser = await this.usersService.findOneByPhone(payload.phone);
-    if (existingUser && !existingUser.isActive) {
-      throw new UnauthorizedException('Ваш аккаунт не активен');
-    }
-
-    try {
-      const user = await this.usersService.createUserAfterVerification(payload);
+      // Создание пользователя
+      const user = await this.usersService.createUserAfterVerification({
+        phone: payload.phone,
+        password: payload.password,
+      });
+      // Удаление кода верификации после успешного создания пользователя
       await this.usersService.deleteVerificationCode(
         payload.phone,
         payload.code,

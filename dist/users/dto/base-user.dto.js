@@ -20,10 +20,11 @@ class BaseUserReq {
 }
 exports.BaseUserReq = BaseUserReq;
 __decorate([
-    (0, swagger_1.ApiProperty)({
+    (0, swagger_1.ApiPropertyOptional)({
         description: 'Email пользователя',
         example: 'user@example.com',
     }),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], BaseUserReq.prototype, "email", void 0);
 __decorate([
@@ -31,13 +32,17 @@ __decorate([
         description: 'Номер телефона пользователя',
         example: '+1234567890',
     }),
+    (0, class_validator_1.IsString)(),
+    (0, is_valid_number_decorator_1.IsValidPhoneNumber)(['KG', 'KZ', 'RU']),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], BaseUserReq.prototype, "phone", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({
+    (0, swagger_1.ApiPropertyOptional)({
         description: 'Полное имя пользователя',
         example: 'John Doe',
     }),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], BaseUserReq.prototype, "fio", void 0);
 class BaseUserRes {
@@ -57,7 +62,7 @@ __decorate([
     __metadata("design:type", Number)
 ], BaseUserRes.prototype, "id", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({
+    (0, swagger_1.ApiPropertyOptional)({
         description: 'Email пользователя',
         example: 'user@example.com',
     }),
@@ -71,20 +76,20 @@ __decorate([
     __metadata("design:type", String)
 ], BaseUserRes.prototype, "phone", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({
+    (0, swagger_1.ApiPropertyOptional)({
         description: 'Полное имя пользователя',
         example: 'John Doe',
     }),
     __metadata("design:type", String)
 ], BaseUserRes.prototype, "fio", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({
+    (0, swagger_1.ApiPropertyOptional)({
         description: 'Дата и время создания пользователя',
     }),
     __metadata("design:type", Date)
 ], BaseUserRes.prototype, "createdAt", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({
+    (0, swagger_1.ApiPropertyOptional)({
         description: 'Дата и время последнего обновления пользователя',
     }),
     __metadata("design:type", Date)
@@ -110,7 +115,7 @@ __decorate([
     __metadata("design:type", Number)
 ], LoginResDto.prototype, "id", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({
+    (0, swagger_1.ApiPropertyOptional)({
         description: 'user fio',
     }),
     __metadata("design:type", String)
@@ -122,7 +127,7 @@ __decorate([
     __metadata("design:type", String)
 ], LoginResDto.prototype, "phone", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({
+    (0, swagger_1.ApiPropertyOptional)({
         description: 'user email',
     }),
     __metadata("design:type", String)

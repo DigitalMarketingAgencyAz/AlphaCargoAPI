@@ -18,11 +18,12 @@ class UpdateUserReqDto {
     password;
     fio;
     phone;
+    email;
 }
 exports.UpdateUserReqDto = UpdateUserReqDto;
 __decorate([
     (0, swagger_1.ApiPropertyOptional)({
-        example: '',
+        example: 'NewPassword123!',
         description: 'Пароль пользователя',
     }),
     (0, class_validator_1.IsOptional)(),
@@ -51,6 +52,14 @@ __decorate([
     (0, is_valid_number_decorator_1.IsValidPhoneNumber)(['KG', 'KZ', 'RU']),
     __metadata("design:type", String)
 ], UpdateUserReqDto.prototype, "phone", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'user@example.com',
+        description: 'Email пользователя',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserReqDto.prototype, "email", void 0);
 class UpdateUserResDto {
     email;
     fio;

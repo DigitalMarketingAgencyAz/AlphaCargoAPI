@@ -13,7 +13,7 @@ const passwordRegEx =
 
 export class UpdateUserReqDto {
   @ApiPropertyOptional({
-    example: '',
+    example: 'NewPassword123!',
     description: 'Пароль пользователя',
   })
   @IsOptional()
@@ -40,6 +40,13 @@ export class UpdateUserReqDto {
   @IsOptional()
   @IsValidPhoneNumber(['KG', 'KZ', 'RU'])
   phone?: string;
+
+  @ApiPropertyOptional({
+    example: 'user@example.com',
+    description: 'Email пользователя',
+  })
+  @IsOptional()
+  email?: string;
 }
 
 export class UpdateUserResDto {
