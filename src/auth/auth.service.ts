@@ -18,6 +18,31 @@ export class AuthService {
 
   // Логин с проверкой телефона и пароля
   async signIn(phone: string, pass: string): Promise<LoginResDto> {
+    // Проверка на специальный тестовый аккаунт
+    if (phone === '+996770244527') {
+      const user = await this.usersService.findOneByPhone(phone);
+
+      if (!user) {
+        throw new UnauthorizedException('Пользователь не найден');
+      }
+
+      const isPasswordMatch = await bcrypt.compare(pass, user.password);
+      if (!isPasswordMatch) {
+        throw new UnauthorizedException('Неправильные учетные данные');
+      }
+
+      // Генерация JWT токена
+      const payload = { id: user.id, phone: user.phone };
+      return {
+        accessToken: await this.jwtService.signAsync(payload, {
+          expiresIn: '3h',
+        }),
+        id: user.id,
+        phone: user.phone,
+        fio: user.fio || null,
+        email: user.email || null,
+      };
+    }
     const user = await this.usersService.findOneByPhone(phone);
 
     if (!user) {
@@ -47,6 +72,25 @@ export class AuthService {
 
   // Регистрация с проверкой СМС-кода
   async signUp(payload: { phone: string; password: string; code: string }) {
+    // Проверка на специальный тестовый аккаунт
+    if (payload.phone === '+996770244527') {
+      const existingUser = await this.usersService.findOneByPhone(
+        payload.phone,
+      );
+      if (existingUser) {
+        throw new ConflictException(
+          'Пользователь с таким номером телефона уже существует',
+        );
+      }
+
+      // Используем UsersService для создания пользователя
+      const user = await this.usersService.createUserAfterVerification({
+        phone: payload.phone,
+        password: payload.password,
+      });
+
+      return user;
+    }
     // Проверка кода верификации
     const isValid = await this.usersService.verifyCode(
       payload.phone,
